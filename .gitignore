@@ -19,6 +19,7 @@ token.json
 client_secret*.json
 
 # Runtime Data
+data/
 api-stats.json
 
 # Misc
