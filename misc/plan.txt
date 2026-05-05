@@ -1,0 +1,113 @@
+actions-manager
+
+https://github.com/orassayag/actions-manager
+
+1. I have a few bat files i'm running. Some of them I run manually from time to time, but most of them run automatically by the windows Task Scheduler.
+2. Here is the list of my bat files:
+
+dailyEventsBot.bat:
+
+cd "C:\Or\web\projects\daily-events-bot"
+pnpm run start
+
+===================
+
+syncDaily.bat:
+
+xcopy /s /y "c:\Users\Or Assayag\Dropbox\or-life\documents\daily" "c:\Users\Or Assayag\Dropbox\or-life\documents\daily-backup"
+
+timeout /t 5 /nobreak >nul
+exit
+
+===================
+
+syncAutoPackagesUpdater.bat:
+
+cd "C:\Or\web\projects\auto-packages-updater"
+npm run start -- AUTO
+pause
+
+===================
+
+seriesAndMovies.bat:
+
+@echo off
+cd /d "C:\Or\web\projects\series-and-movies"
+pnpm run add
+pause
+
+===================
+
+reposScanReporter.bat:
+
+cd "C:\Or\web\projects\repos-maintainer"
+npm run start -- AUTO
+
+===================
+
+contactsScanMaintainer.bat:
+
+cd "C:\Or\web\projects\events-and-people-syncer"
+npm run start -- AUTO
+
+===================
+
+globalPackageUpdater.bat:
+
+@echo off
+cd /d "C:\Or\web\projects\global-package-updater"
+pnpm run start
+pause
+
+3. Since i'm adding more and more scripts to my local pc to run more of them, i have now difficultly:
+3.1. Handle and add each time another bat file and add it to the run automatically by the windows Task Scheduler
+3.2. Don't have a clear view when i last run each bat (the windows Task Scheduler is too messy and complex)
+3.3. I have floating bat files all around my desktop and it's a mess.
+3.4. It's most of the time the same routine of adding the same lines of code into a new bat file and place it into the desktop.
+4. I want to build an actions manager (typescript node) which will:
+4.1. From the windows Task Scheduler will be called always into the same program - this actions manager.
+4.2. Will store the last date and the time of run of each of the actions
+4.3. The actions manager will be called by a bat files, and via the windows Task Scheduler will pass the name of the action.
+4.4. It will be easy to add a new action - Just add the action logic in this action manager program and add the new action to the windows Task Scheduler with the new action param.
+4.5. So instead of all these bats file i will have a single bat file which will which:
+4.5.1. If received a param from outside via the windows Task Scheduler - Will run the action automatically.
+4.5.2. If no params received (run the bat file manually) - IT will have a drop down (Via XXX package) to select the actions i want to run.
+4.6. Some of the scripts have the "pause" keyword which mean i don't want the window to be closed automatically in the end of the execution and to view the results, i wish to keep this logic for the relevant actions.
+5. Some of the scripts are running a program to select a dropdown or any manual actions logic, we should not break them.
+6. After each run (manually or by the windows Task Scheduler) it will update the last date & time of run in a local json file (action name and date time) - Jerusalem time.
+6.1. It will then update (create the file if not exists) a txt file called "ACTIONS_REPORT.txt" with the name of the action | run type (Task Scheduler (#PERIOD#)/Manual) |last run date & time (Jerusalem 24h time in the format of dd/MM/yyyy hh:mm:ss. For example:
+Daily Sync      		| Task Scheduler (Daily)  | 23/12/2025 17:23:34
+Repos Scan Reporter 		| Task Scheduler (Weekly) | 20/12/2025 13:12:19
+Contacts Scan Maintainer	| Manual                  | 23/12/2025 22:26:12
+and so on...
+6.2. Each time when running an action both by Task Scheduler or by Manual it will update this file, regardless if success or fail, so i would just open this file on the desktop and see which of them run last time.
+7. On the README.md file put simple and clear instructions on how to add a new action.
+
+===============
+
+package.json description:
+
+README.md description:
+
+keywords / topics:
+
+bats-manager
+
+Plan:
+1. This project will handle the report and executions and store all the bats files of all the projects.
+2. This is a private project and no need to contribute.
+4. It will have README.md + LICENSE only.
+5. Responsibilities:
+5.1. To store a backup of all the bat files. Need to make sure every new bat file will also be backuped to this project.
+5.2. Will have a bat script that it's responsibility is to write to a notepad file.
+5.3. The idea is that this will manage the last execution of each bat file and will list it to a notepad file. It means to override the complex "Task Scheduler" view with a simple view of the desired bats execution, which can be run by scheduled run or by manually run.
+5.4. For each bat we will add another line to run this program and to mark the last date and time execution time of the specific bat, the mark will be into a text file on the desktop called "C:\Users\Or Assayag\Desktop\BATS_REPORT.txt" (if this file not exists we should create it) - The path of course will be handled dynamically from settings.ts file.
+5.5. Example of a bat file:
+cd "C:\Or\web\projects\daily-events-bot"
+pnpm run start
+
+#Here we need to call to the bats-manager and pass the name of the bat which run#:
+cd "C:\Or\web\projects\bats-manager"
+pnpm run start --dailyEventsBot.bat
+
+======================

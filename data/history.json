@@ -1,0 +1,33 @@
+{
+  "dailyEventsBot": {
+    "lastRunAt": "2026-05-05T16:25:04.972Z",
+    "runType": "Manual",
+    "status": "Error"
+  },
+  "syncDaily": {
+    "lastRunAt": "2026-05-05T16:12:23.631Z",
+    "runType": "Manual"
+  },
+  "syncAutoPackagesUpdater": {
+    "lastRunAt": "2026-05-05T16:12:45.839Z",
+    "runType": "Manual"
+  },
+  "seriesAndMovies": {
+    "lastRunAt": "2026-05-05T16:13:20.960Z",
+    "runType": "Manual"
+  },
+  "reposScanReporter": {
+    "lastRunAt": "2026-05-05T16:13:43.573Z",
+    "runType": "Manual"
+  },
+  "contactsScanMaintainer": {
+    "lastRunAt": "2026-05-05T16:25:29.654Z",
+    "runType": "Manual",
+    "status": "Finished"
+  },
+  "globalPackageUpdater": {
+    "lastRunAt": "2026-05-05T16:29:48.808Z",
+    "runType": "Manual",
+    "status": "Finished"
+  }
+}

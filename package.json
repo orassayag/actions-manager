@@ -35,11 +35,11 @@
     "lint": "eslint \"src/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "start": "tsx src/index.ts",
-    "start:live": "cross-env DRY_MODE=false tsx src/index.ts",
-    "start:no-cache": "tsx src/index.ts --no-cache",
-    "sync": "tsx src/index.ts --auto",
-    "dev": "tsx watch src/index.ts",
+    "start": "cross-env NODE_NO_WARNINGS=1 tsx src/index.ts",
+    "start:live": "cross-env DRY_MODE=false NODE_NO_WARNINGS=1 tsx src/index.ts",
+    "start:no-cache": "cross-env NODE_NO_WARNINGS=1 tsx src/index.ts --no-cache",
+    "sync": "cross-env NODE_NO_WARNINGS=1 tsx src/index.ts --auto",
+    "dev": "cross-env NODE_NO_WARNINGS=1 tsx watch src/index.ts",
     "test": "cross-env NODE_OPTIONS='--no-warnings' vitest run --coverage",
     "test:watch": "cross-env NODE_OPTIONS='--no-warnings' vitest",
     "test:no-coverage": "cross-env NODE_OPTIONS='--no-warnings' vitest run",
@@ -77,11 +77,14 @@
     "node": ""
   },
   "dependencies": {
-    "dotenv": "^17.4.2"
+    "dotenv": "^17.4.2",
+    "enquirer": "^2.4.1",
+    "inquirer": "^9.3.7"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@rolldown/binding-win32-x64-msvc": "^1.0.0-rc.18",
+    "@types/inquirer": "^9.0.7",
     "@types/node": "^25.6.0",
     "@typescript-eslint/eslint-plugin": "^8.59.2",
     "@typescript-eslint/parser": "^8.59.2",
