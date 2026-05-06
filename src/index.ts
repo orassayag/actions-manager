@@ -60,12 +60,12 @@ async function runInteractive(): Promise<void> {
 
 // ─── Entry point ──────────────────────────────────────────────────────────────
 
-(async () => {
-  const arg = process.argv[2];
+export async function main(args: string[]): Promise<void> {
+  const arg = args[0];
 
   if (arg === '--help' || arg === '-h') {
     printUsage();
-    process.exit(0);
+    return;
   }
 
   if (arg) {
@@ -75,4 +75,11 @@ async function runInteractive(): Promise<void> {
     // Called manually — show interactive picker
     await runInteractive();
   }
-})();
+}
+
+if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
+  main(process.argv.slice(2)).catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
