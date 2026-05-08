@@ -21,11 +21,12 @@ export default defineConfig({
         '**/*.config.*',
       ],
       include: ['src/**/*.ts'],
-      all: true,
-      lines: 80,
-      functions: 80,
-      branches: 80,
-      statements: 80,
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 80,
+        statements: 80,
+      },
     },
   },
 });
