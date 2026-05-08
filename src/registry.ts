@@ -8,6 +8,7 @@ import seriesAndMovies from './actions/seriesAndMovies';
 import reposScanReporter from './actions/reposScanReporter';
 import contactsScanMaintainer from './actions/contactsScanMaintainer';
 import globalPackageUpdater from './actions/globalPackageUpdater';
+import backupsManager from './actions/backupsManager';
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 // Order here controls the dropdown order when running manually.
@@ -27,6 +28,7 @@ const actions: ActionDefinition[] = [
   reposScanReporter,
   contactsScanMaintainer,
   globalPackageUpdater,
+  backupsManager,
 ];
 
 export default actions;
