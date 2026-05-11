@@ -1,11 +1,11 @@
 export type RunType = 'Manual' | 'Task Scheduler';
 export type RunStatus = 'Running' | 'Finished' | 'Error';
 
-export interface ActionHistory {
+interface ActionHistory {
   lastRunAt: string; // ISO string (Jerusalem time stored as local ISO)
   runType: RunType;
   status: RunStatus;
-  period?: string;   // e.g. "Daily", "Weekly" — only for Task Scheduler runs
+  period?: string; // e.g. "Daily", "Weekly" — only for Task Scheduler runs
 }
 
 export interface ActionHistoryMap {

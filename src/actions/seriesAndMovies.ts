@@ -7,6 +7,7 @@ const seriesAndMovies: ActionDefinition = {
   schedulePeriod: undefined, // manual only
   pauseAfterRun: true, // was "pause" in the original bat
   run: async () => {
+    await Promise.resolve();
     const result = spawnSync('pnpm', ['run', 'add'], {
       cwd: 'C:\\Or\\web\\projects\\series-and-movies',
       stdio: 'inherit',

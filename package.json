@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Centralized TypeScript Node.js actions manager that replaces scattered BAT scripts and simplifies Windows Task Scheduler automation. Runs actions by name, tracks last execution time, supports manual selection via CLI, preserves interactive flows, and generates a report for monitoring tasks.",
   "type": "module",
-  "private": true,
+  "private": false,
   "repository": {
     "type": "git",
     "url": "git://github.com/orassayag/actions-manager.git"
@@ -46,7 +46,11 @@
     "test:ui": "vitest --ui",
     "build": "tsc"
   },
-  "author": "Or Assayag <orassayag@gmail.com>",
+  "author": {
+    "name": "Or Assayag",
+    "email": "orassayag@gmail.com",
+    "url": "https://github.com/orassayag"
+  },
   "contributors": [
     {
       "name": "Or Assayag",
@@ -55,37 +59,50 @@
     }
   ],
   "files": [
+    ".github",
     ".vscode",
+    "coverage",
+    "data",
     "dist",
+    "misc",
     "src",
     ".gitignore",
     ".prettierrc",
-    "eslint.config.mjs",
-    "CONTRIBUTING.md",
-    "LICENSE",
-    "INSTRUCTIONS.md",
+    "actionsManager.bat",
     "CHANGELOG.md",
+    "CODE_OF_CONDUCT.md",
+    "CONTRIBUTING.md",
+    "eslint.config.mjs",
+    "INSTRUCTIONS.md",
+    "LICENSE",
     "package.json",
     "pnpm-lock.yaml",
-    "pnpm-workspace.yaml",
     "README.md",
+    "SECURITY.md",
     "tsconfig.json",
+    "tsconfig.node.json",
     "vitest.config.ts"
   ],
   "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/orassayag/actions-manager/issues"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/orassayag"
+  },
+  "homepage": "https://github.com/orassayag/actions-manager#readme",
   "engines": {
-    "node": ""
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
   },
   "dependencies": {
-    "dotenv": "^17.4.2",
-    "enquirer": "^2.4.1",
-    "inquirer": "^9.3.7"
+    "enquirer": "^2.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@rolldown/binding-win32-x64-msvc": "^1.0.0-rc.18",
-    "@types/inquirer": "^9.0.7",
-    "@types/node": "^25.6.0",
+    "@rolldown/binding-win32-x64-msvc": "^1.0.0",
+    "@types/node": "^25.6.2",
     "@typescript-eslint/eslint-plugin": "^8.59.2",
     "@typescript-eslint/parser": "^8.59.2",
     "@vitest/coverage-istanbul": "^4.1.5",

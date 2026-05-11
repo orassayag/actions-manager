@@ -7,6 +7,7 @@ import seriesAndMovies from '../seriesAndMovies';
 import reposScanReporter from '../reposScanReporter';
 import contactsScanMaintainer from '../contactsScanMaintainer';
 import globalPackageUpdater from '../globalPackageUpdater';
+import backupsManager from '../backupsManager';
 
 vi.mock('child_process', () => ({
   spawnSync: vi.fn(),
@@ -24,18 +25,23 @@ describe('Actions Implementation', () => {
     { action: reposScanReporter, name: 'reposScanReporter' },
     { action: contactsScanMaintainer, name: 'contactsScanMaintainer' },
     { action: globalPackageUpdater, name: 'globalPackageUpdater' },
+    { action: backupsManager, name: 'backupsManager' },
   ];
 
   actions.forEach(({ action, name }) => {
     describe(name, () => {
       it('should execute successfully', async () => {
-        vi.spyOn(child_process, 'spawnSync').mockReturnValue({ status: 0 } as any);
+        vi.spyOn(child_process, 'spawnSync').mockReturnValue({
+          status: 0,
+        } as any);
         await action.run();
         expect(child_process.spawnSync).toHaveBeenCalled();
       });
 
       it('should throw error if process fails', async () => {
-        vi.spyOn(child_process, 'spawnSync').mockReturnValue({ status: 1 } as any);
+        vi.spyOn(child_process, 'spawnSync').mockReturnValue({
+          status: 1,
+        } as any);
         await expect(action.run()).rejects.toThrow(/exited with code 1/);
       });
     });
@@ -43,18 +49,26 @@ describe('Actions Implementation', () => {
 
   describe('syncDaily', () => {
     it('should execute xcopy successfully', async () => {
-      vi.spyOn(child_process, 'spawnSync').mockReturnValue({ status: 0 } as any);
+      vi.spyOn(child_process, 'spawnSync').mockReturnValue({
+        status: 0,
+      } as any);
       // Mock setTimeout to avoid waiting 5 seconds in tests
       vi.useFakeTimers();
       const promise = syncDaily.run();
       vi.runAllTimers();
       await promise;
-      expect(child_process.spawnSync).toHaveBeenCalledWith('xcopy', expect.any(Array), expect.any(Object));
+      expect(child_process.spawnSync).toHaveBeenCalledWith(
+        'xcopy',
+        expect.any(Array),
+        expect.any(Object)
+      );
       vi.useRealTimers();
     });
 
     it('should throw error if xcopy fails', async () => {
-      vi.spyOn(child_process, 'spawnSync').mockReturnValue({ status: 4 } as any);
+      vi.spyOn(child_process, 'spawnSync').mockReturnValue({
+        status: 4,
+      } as any);
       await expect(syncDaily.run()).rejects.toThrow(/xcopy exited with code 4/);
     });
   });

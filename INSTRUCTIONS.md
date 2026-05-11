@@ -1,89 +1,218 @@
-# Instructions
+# Setup and Usage Instructions
 
-A centralized TypeScript Node.js actions manager designed to replace scattered `.bat` scripts and simplify Windows Task Scheduler automation.
+## Table of Contents
 
-## Setup Instructions
-
-1. **Clone the project** to your local machine.
-2. **Install dependencies**:
-   ```bash
-   pnpm install
-   ```
-3. **Configure Settings**:
-   Edit [settings.ts](src/settings.ts) to define your `reportPath` (e.g., your Desktop).
+1. [Prerequisites](#prerequisites)
+2. [Initial Setup](#initial-setup)
+3. [Available Commands](#available-commands)
+4. [Script Usage Guide](#script-usage-guide)
+5. [Troubleshooting](#troubleshooting)
+6. [Extending the Application](#extending-the-application)
+7. [Best Practices](#best-practices)
+8. [Documentation](#documentation)
+9. [External Resources](#external-resources)
 
 ## Prerequisites
 
-- **Node.js**: v20 or higher.
-- **pnpm**: Recommended package manager.
-- **Task Scheduler**: For automated runs.
+### System Requirements
 
-## Configuration
+- **Node.js**: Version 20 or higher recommended
+- **Package Manager**: pnpm (recommended) or npm
+- **Operating System**: Windows (primary target for `.bat` integration)
+- **Memory**: 2GB RAM minimum
+- **Disk Space**: 200MB for application and dependencies
 
-### Main Settings
+### Task Scheduler Requirements
 
-Open [settings.ts](src/settings.ts) to manage:
+- Administrative access to create tasks in Windows Task Scheduler
+- Basic understanding of task triggers and arguments
 
-- `reportPath`: The absolute path where `ACTIONS_REPORT.txt` is generated.
+## Initial Setup
 
-### Action Registration
+### 1. Install Dependencies
 
-All actions must be registered in [registry.ts](src/registry.ts) to be visible in the CLI and report.
-
-### Action Definition
-
-Each action is a TypeScript module in [src/actions/](src/actions/) implementing the `ActionDefinition` interface:
-
-- `name`: Unique identifier (used for Task Scheduler arguments).
-- `label`: Display name in CLI and report.
-- `schedulePeriod`: Frequency label (Daily, Weekly, etc.).
-- `pauseAfterRun`: Whether to keep the terminal open after manual execution.
-- `run`: The async function containing the action logic.
-
-## Running Scripts
-
-### Interactive Mode (Manual)
-
-Run the project-level or desktop batch file:
+**Using pnpm (recommended):**
 
 ```bash
+pnpm install
+```
+
+**Using npm:**
+
+```bash
+npm install
+```
+
+**Verify installation:**
+
+```bash
+pnpm build
+```
+
+### 2. Configure Settings
+
+#### Main Settings
+
+Open [settings.ts](file:///c:/Or/web/projects/actions-manager/src/settings.ts) to manage:
+
+- `reportPath`: The absolute path where `ACTIONS_REPORT.txt` is generated (e.g., your Desktop).
+
+#### Action Registration
+
+All actions must be registered in [registry.ts](file:///c:/Or/web/projects/actions-manager/src/registry.ts) to be visible in the CLI and report.
+
+## Available Commands
+
+### Development Commands
+
+**Linting and Formatting:**
+
+```bash
+# Check code style and quality
+pnpm lint
+
+# Format all TypeScript files
+pnpm format
+
+# Check formatting without modifying files
+pnpm format:check
+```
+
+**Building:**
+
+```bash
+# Compile TypeScript to JavaScript
+pnpm build
+
+# Development mode with auto-reload
+pnpm dev
+```
+
+**Testing:**
+
+```bash
+# Run all tests with coverage
+pnpm test
+
+# Run tests in watch mode
+pnpm test:watch
+
+# Open Vitest UI
+pnpm test:ui
+```
+
+### Running Scripts
+
+**Interactive Mode (Manual):**
+
+```bash
+# Run the interactive manager
+pnpm start
+
+# Or via the batch file
 ./actionsManager.bat
 ```
 
-This launches the `enquirer` menu for manual action selection.
-
-### Scheduled Mode (Task Scheduler)
-
-Execute the batch file with an action name as an argument:
+**Scheduled Mode (Task Scheduler):**
 
 ```bash
+# Execute with an action name argument
 ./actionsManager.bat dailyEventsBot
 ```
 
-### Testing
+## Script Usage Guide
 
-```bash
-pnpm test           # Run Vitest suite with coverage
-pnpm test:watch     # Run tests in watch mode
+### Manual Execution
+
+1. Run `actionsManager.bat`.
+2. Use arrow keys to select an action.
+3. Press `Enter` to execute or `Esc` to exit.
+4. The terminal may pause after execution if `pauseAfterRun` is set to `true` in the action definition.
+
+### Automated Execution (Task Scheduler)
+
+1. Open **Task Scheduler**.
+2. Create a new **Basic Task**.
+3. Set your desired **Trigger** (Daily, Weekly, etc.).
+4. For **Action**, select **Start a program**.
+5. **Program/script**: `C:\path\to\actions-manager\actionsManager.bat`.
+6. **Add arguments**: `<actionName>` (e.g., `dailyEventsBot`).
+7. **Start in**: `C:\path\to\actions-manager`.
+
+## Troubleshooting
+
+### Common Issues and Solutions
+
+#### Action Not Found
+
+**Problem**: "Unknown action: 'actionName'"
+
+**Solutions**:
+
+1. Verify the action name matches the `name` field in the action file.
+2. Ensure the action is registered in [registry.ts](file:///c:/Or/web/projects/actions-manager/src/registry.ts).
+
+#### Task Scheduler Failures
+
+**Problem**: Task runs but fails to execute the action correctly.
+
+**Solutions**:
+
+1. Check "Start in" directory in Task Scheduler (must be the project root).
+2. Ensure `pnpm` and `tsx` are in the system PATH.
+3. Check `data/history.json` or `ACTIONS_REPORT.txt` for error messages.
+
+#### Path Issues
+
+**Problem**: Report not generated or history not saved.
+
+**Solutions**:
+
+1. Verify `reportPath` in [settings.ts](file:///c:/Or/web/projects/actions-manager/src/settings.ts) is a valid absolute path.
+2. Ensure the `data/` directory exists and is writable.
+
+## Extending the Application
+
+### Adding New Actions
+
+1. **Create Action File**: Add a new file in `src/actions/` (e.g., `myAction.ts`).
+2. **Implement Interface**: Export a default object implementing `ActionDefinition`.
+3. **Register Action**: Import and add to the `actions` array in [registry.ts](file:///c:/Or/web/projects/actions-manager/src/registry.ts).
+
+```typescript
+import { ActionDefinition } from '../types';
+
+const myAction: ActionDefinition = {
+  name: 'myAction',
+  label: 'My Action',
+  schedulePeriod: 'Daily',
+  run: async () => {
+    // Your logic here
+  },
+};
+export default myAction;
 ```
 
-## Quick Start Guide
+## Best Practices
 
-1. **Install pnpm** if you haven't already.
-2. **Run `pnpm install`** in the project root.
-3. **Verify `settings.ts`** has a valid path for your report.
-4. **Run `./actionsManager.bat`** to see the interactive menu.
-5. **Configure Task Scheduler** for any automated tasks using the action names.
+1. **Keep Actions Modular**: Each action should handle one specific task.
+2. **Use Robust Sub-processes**: Use `spawnSync` for external commands to ensure proper lifecycle management.
+3. **Meaningful Labels**: Labels should be clear for users selecting them in the interactive menu.
+4. **Regular Testing**: Run `pnpm test` before committing changes to ensure core logic remains stable.
+5. **Monitor Reports**: Check the generated status reports regularly to identify failing automated tasks.
 
-## File Structure
+## Documentation
 
-- [src/index.ts](src/index.ts): Main entry point.
-- [src/registry.ts](src/registry.ts): Action registry.
-- [src/runner.ts](src/runner.ts): Execution engine.
-- [src/history.ts](src/history.ts): Persistence and reporting.
-- [src/actions/](src/actions/): Individual action files.
-- [data/history.json](data/history.json): Execution database.
-- [actionsManager.bat](actionsManager.bat): Windows batch entry point.
+- **README.md**: General project overview and features.
+- **CHANGELOG.md**: History of changes and versions.
+- **Architecture Flow**: See the Mermaid diagram in [README.md](file:///c:/Or/web/projects/actions-manager/README.md).
+
+## External Resources
+
+- [Node.js Documentation](https://nodejs.org/docs)
+- [TypeScript Documentation](https://www.typescriptlang.org/docs/)
+- [Vitest Documentation](https://vitest.dev/guide/)
+- [Enquirer Documentation](https://github.com/enquirer/enquirer)
 
 ## Author
 
@@ -92,3 +221,8 @@ pnpm test:watch     # Run tests in watch mode
 - GitHub: https://github.com/orassayag
 - StackOverflow: https://stackoverflow.com/users/4442606/or-assayag?tab=profile
 - LinkedIn: https://linkedin.com/in/orassayag
+
+---
+
+**Last Updated**: 2026-05-11
+**Version**: 1.0.0

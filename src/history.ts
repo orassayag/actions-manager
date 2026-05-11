@@ -78,7 +78,7 @@ function saveHistory(history: ActionHistoryMap): void {
  */
 function rebuildReport(
   actions: ActionDefinition[],
-  history: ActionHistoryMap,
+  history: ActionHistoryMap
 ): void {
   ensureDataDir();
 
@@ -146,7 +146,7 @@ export function recordRun(
   action: ActionDefinition,
   runType: RunType,
   allActions: ActionDefinition[],
-  status: RunStatus = 'Finished',
+  status: RunStatus = 'Finished'
 ): void {
   const history = loadHistory();
 

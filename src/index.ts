@@ -77,6 +77,7 @@ export async function main(args: string[]): Promise<void> {
   }
 }
 
+/* istanbul ignore next */
 if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
   main(process.argv.slice(2)).catch((err) => {
     console.error(err);

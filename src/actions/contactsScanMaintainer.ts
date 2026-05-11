@@ -7,6 +7,7 @@ const contactsScanMaintainer: ActionDefinition = {
   schedulePeriod: 'Weekly',
   pauseAfterRun: false,
   run: async () => {
+    await Promise.resolve();
     const result = spawnSync('npm', ['run', 'start', '--', 'AUTO'], {
       cwd: 'C:\\Or\\web\\projects\\events-and-people-syncer',
       stdio: 'inherit',

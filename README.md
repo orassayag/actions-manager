@@ -1,23 +1,34 @@
-# actions-manager
+# Actions Manager
 
 A centralized TypeScript Node.js actions manager designed to replace scattered `.bat` scripts and simplify Windows Task Scheduler automation. It provides a single entry point for running various automation tasks, tracking their execution history, and generating comprehensive status reports.
 
-Built with TypeScript and modern ES Modules, this project focuses on reliability, maintainability, and providing a great developer experience for local automation workflows.
+Built in May 2026. This application focuses on reliability, maintainability, and providing a great developer experience for local automation workflows.
 
 ## Features
 
-- **One bat file** (`actionsManager.bat`) replaces everything on your desktop.
-- **Interactive dropdown** when run manually (no argument) powered by `enquirer`.
-- **Direct execution** when called by Windows Task Scheduler (with action name as argument).
-- **Automatic history** — every run (success or fail) is logged to `data/history.json` and `ACTIONS_REPORT.txt` on your Desktop.
-- 🚀 **Centralized Execution**: Single entry point for all project actions via `actionsManager.bat`.
-- 🕒 **Execution Tracking**: Automatically records the last execution time and run type (Manual vs. Task Scheduler) for every action.
-- 📊 **Status Reporting**: Generates a real-time report for at-a-glance monitoring.
-- 🛡️ **Robust Error Handling**: Suppresses noisy stack traces for expected process failures while preserving them for unexpected crashes.
-- 🧪 **Testing Infrastructure**: Full Vitest setup with high coverage requirements (80%+) and automated reporting.
-- 🔄 **Modern ESM Architecture**: Built using ES Modules and TypeScript for a future-proof codebase.
-- ⌨️ **Keyboard Navigation**: Full support for `Esc` to exit menus and clean terminal interactions.
-- 🔇 **Quiet Mode**: Suppresses Node.js deprecation warnings and unnecessary shell noise.
+### Core Capabilities
+
+- **Centralized Action Management**: Single entry point for all project actions via `actionsManager.bat`.
+- **Interactive CLI**: Dynamic dropdown menu powered by `enquirer` for manual action selection.
+- **Task Scheduler Integration**: Direct execution mode optimized for Windows Task Scheduler.
+- **Automatic History Logging**: Every run is recorded to `data/history.json` and `ACTIONS_REPORT.txt`.
+- **Real-Time Status Reporting**: Generates monitoring reports for at-a-glance task status.
+
+### Technical Excellence
+
+- **Modern ESM Architecture**: Built using ES Modules and TypeScript for a future-proof codebase.
+- **Robust Error Handling**: Suppresses noisy stack traces for expected failures while preserving them for crashes.
+- **Type Safety**: Full TypeScript implementation with strict type checking.
+- **Comprehensive Testing**: Full Vitest setup with high coverage requirements (80%+).
+- **Execution Tracking**: Automatically records last execution time and run type for every action.
+
+### Developer Experience
+
+- **Unified Entry Point**: One `.bat` file replaces multiple scattered scripts on your desktop.
+- **ESC Navigation**: Full support for `Esc` to exit menus gracefully.
+- **Quiet Mode**: Suppresses Node.js deprecation warnings and unnecessary shell noise.
+- **Automatic Documentation**: History and reports are generated automatically without manual intervention.
+- **Fast Execution**: Uses `tsx` for high-performance execution of TypeScript files.
 
 ## Getting Started
 
@@ -25,44 +36,55 @@ Built with TypeScript and modern ES Modules, this project focuses on reliability
 
 - **Node.js**: v20 or higher recommended.
 - **pnpm**: Fast, disk space efficient package manager.
-- **TypeScript**: The project uses `tsx` for high-performance execution of TypeScript files.
+- **TypeScript**: The project uses `tsx` for execution.
 
 ### Installation
 
 1. Clone the repository:
 
-   ```bash
-   git clone https://github.com/orassayag/actions-manager.git
-   cd actions-manager
-   ```
+```bash
+git clone https://github.com/orassayag/actions-manager.git
+cd actions-manager
+```
 
 2. Install dependencies:
 
-   ```bash
-   pnpm install
-   ```
+```bash
+pnpm install
+```
 
 3. Configure your report path:
-   Edit [settings.ts](src/settings.ts) to set your desired `ACTIONS_REPORT.txt` location.
+   Edit [settings.ts](file:///c:/Or/web/projects/actions-manager/src/settings.ts) to set your desired `ACTIONS_REPORT.txt` location.
 
-### Quick Start
+## Configuration
 
-#### Manual Mode (Interactive)
+### Project Settings
 
-Run the batch file from your Desktop or the project root:
+Edit [settings.ts](file:///c:/Or/web/projects/actions-manager/src/settings.ts) to manage global configurations:
+
+- `reportPath`: Absolute path where the status report will be generated (e.g., your Desktop).
+
+### Adding New Actions
+
+1. **Create the action file**: Create `src/actions/myNewAction.ts` implementing the `ActionDefinition` interface.
+2. **Register the action**: Open `src/registry.ts`, import your action and add it to the `actions` array.
+
+## Usage
+
+### Interactive Menu (Recommended)
+
+Start the interactive CLI menu to select and run actions manually:
 
 ```bash
 ./actionsManager.bat
 ```
 
-You'll see an interactive dropdown listing all available actions. Select one with arrow keys and press `Enter` to run, or `Esc` to exit.
-
-#### Task Scheduler Mode
+### Task Scheduler Mode
 
 Point your Task Scheduler task to the batch file and pass the action name as an argument:
 
 - **Program/script**: `C:\path\to\actions-manager\actionsManager.bat`
-- **Add arguments**: `actionName` ← the action's `name` field (see table below)
+- **Add arguments**: `actionName`
 - **Start in**: `C:\path\to\actions-manager`
 
 ### Current Actions & Their Arguments
@@ -77,67 +99,152 @@ Point your Task Scheduler task to the batch file and pass the action name as an 
 | `contactsScanMaintainer`  | Contacts Scan Maintainer | Weekly   |
 | `globalPackageUpdater`    | Global Package Updater   | Manual   |
 
-## Configuration
+## Best Practices
 
-### Project Settings
-
-Edit [settings.ts](src/settings.ts) to manage global configurations:
-
-- `reportPath`: Absolute path where the status report will be generated (e.g., your Desktop).
-
-### Adding New Actions
-
-#### Step 1 — Create the action file
-
-Create `src/actions/myNewAction.ts`:
-
-```typescript
-import { ActionDefinition } from '../types';
-import { spawnSync } from 'child_process';
-
-const myNewAction: ActionDefinition = {
-  name: 'myNewAction', // Unique key used as the Task Scheduler argument
-  label: 'My New Action', // Human-readable label
-  schedulePeriod: 'Daily', // 'Daily', 'Weekly', 'Monthly', or undefined
-  pauseAfterRun: false, // Keep terminal open after manual runs?
-  run: async () => {
-    const result = spawnSync('pnpm', ['run', 'start'], {
-      cwd: 'C:\\Or\\web\\projects\\my-new-project',
-      stdio: 'inherit',
-      shell: true,
-    });
-    if (result.status !== 0) {
-      throw new Error(`Process exited with code ${result.status}`);
-    }
-  },
-};
-export default myNewAction;
-```
-
-#### Step 2 — Register the action
-
-Open `src/registry.ts`, import your action and add it to the `actions` array.
+1. **Use Meaningful Labels**: Ensure action labels are descriptive for the CLI menu.
+2. **Handle Sub-Processes**: Use `spawnSync` or `execSync` with `stdio: 'inherit'` to preserve interactive flows.
+3. **Monitor the Report**: Periodically check `ACTIONS_REPORT.txt` on your desktop for task status.
+4. **Test Before Scheduling**: Run actions manually via the CLI before setting them up in Task Scheduler.
+5. **Keep Settings Local**: Use [settings.ts](file:///c:/Or/web/projects/actions-manager/src/settings.ts) for environment-specific paths.
 
 ## Available Scripts
 
-### Development
+### CLI Operations
+
+**Start the interactive menu:**
 
 ```bash
-pnpm start          # Run the interactive manager
-pnpm dev            # Run in watch mode for development
-pnpm lint           # Run ESLint to check code quality
-pnpm format         # Format code using Prettier
+pnpm start
+```
+
+**Run in live mode (disables dry-mode):**
+
+```bash
+pnpm start:live
+```
+
+**Run with no cache:**
+
+```bash
+pnpm start:no-cache
+```
+
+**Run in auto mode (for Task Scheduler):**
+
+```bash
+pnpm sync
+```
+
+**Development mode with auto-reload:**
+
+```bash
+pnpm dev
 ```
 
 ### Testing
 
+**Run all tests:**
+
 ```bash
-pnpm test           # Run all unit tests and generate coverage report
-pnpm test:watch     # Run tests in watch mode
-pnpm test:ui        # Open Vitest UI for interactive testing
+pnpm test
 ```
 
-## Project Structure
+**Watch mode (during development):**
+
+```bash
+pnpm test:watch
+```
+
+**Run tests without coverage:**
+
+```bash
+pnpm test:no-coverage
+```
+
+**Run Vitest UI:**
+
+```bash
+pnpm test:ui
+```
+
+### Maintenance
+
+**Lint code:**
+
+```bash
+pnpm lint
+```
+
+**Format code:**
+
+```bash
+pnpm format
+pnpm format:check  # Check without modifying
+```
+
+**Compile TypeScript:**
+
+```bash
+pnpm build
+```
+
+## Development
+
+### Code Quality
+
+**Linting:**
+The project uses ESLint with strict rules to ensure code quality and consistency.
+
+```bash
+pnpm lint
+```
+
+**Formatting:**
+Prettier is used for code formatting. Always format your code before submitting a pull request.
+
+```bash
+pnpm format
+```
+
+### Testing
+
+**Unit Testing:**
+We use Vitest for unit and integration testing. All new logic should include corresponding tests.
+
+```bash
+pnpm test
+```
+
+**Coverage:**
+The project has high coverage requirements (80%+). Ensure your tests maintain this threshold.
+
+```bash
+pnpm test:coverage
+```
+
+### Building
+
+**Compilation:**
+Compile the TypeScript source to JavaScript:
+
+```bash
+pnpm build
+```
+
+**Execution:**
+The project uses `tsx` for direct execution of TypeScript files during development.
+
+### Architecture Principles
+
+This project follows clean architecture principles:
+
+1. **Layered Architecture**: Decoupled entry, interactive, execution, and history layers.
+2. **Registry Pattern**: Centralized registration of actions for easy management.
+3. **Single Responsibility**: Each action is a standalone module in the `actions/` directory.
+4. **Robust Persistence**: JSON-based history tracking for reliable data storage.
+5. **Fail-Safe Design**: Errors in one action don't prevent others from being managed.
+
+## Directory Structure
 
 ```
 actions-manager/
@@ -159,46 +266,28 @@ actions-manager/
 └── package.json          # Project dependencies and scripts
 ```
 
-## How It Works
+## Design Patterns
 
-```mermaid
-graph TD
-    A[User / Task Scheduler] --> B{Argument Provided?}
+- **Registry Pattern**: All actions are registered in a central registry for discovery.
+- **Command Pattern**: Actions encapsulate execution logic within a `run` function.
+- **Strategy Pattern**: Different execution strategies for manual vs. scheduled runs.
+- **Observer Pattern**: Logging and reporting systems observe action lifecycle events.
 
-    B -->|No| C[Interactive Menu]
-    B -->|Yes| D[Direct Execution]
+## Contributing
 
-    C -->|Select Action| E[Runner Engine]
-    C -->|Press ESC| F[Exit Program]
+We welcome contributions! Please follow these guidelines:
 
-    D -->|Match Name| E
+- Report issues via GitHub Issues.
+- Submit pull requests for new features or bug fixes.
+- Maintain high test coverage for any new logic.
+- Follow the existing ESM and TypeScript patterns.
 
-    subgraph "Runner Engine"
-        E --> G[Record Run: Running]
-        G --> H[Update ACTIONS_REPORT.txt]
-        H --> I[Execute Sub-Process]
-        I --> J{Success?}
-        J -->|Yes| K[Log Success]
-        J -->|No| L[Handle Error Quietly]
-        K --> M[Record Run: Finished]
-        L --> N[Record Run: Error]
-        M --> O[Update ACTIONS_REPORT.txt]
-        N --> O
-    end
+## Support
 
-    O --> P{Pause Requested?}
-    P -->|Yes| Q[Wait for Any Key]
-    P -->|No| R[Exit]
-    Q --> R
-```
+For questions, issues, or contributions:
 
-## Architecture Flow
-
-1. **Entry Layer ([index.ts](src/index.ts))**: Determines if the run is manual or scheduled.
-2. **Interactive Layer ([prompt.ts](src/prompt.ts))**: Handles user input with `Esc` support.
-3. **Execution Layer ([runner.ts](src/runner.ts))**: Manages the lifecycle of an action run.
-4. **History Layer ([history.ts](src/history.ts))**: Handles JSON persistence and text report generation.
-5. **Action Layer ([actions/](src/actions/))**: Decoupled modules for each specific task.
+- **GitHub Issues**: [https://github.com/orassayag/actions-manager/issues](https://github.com/orassayag/actions-manager/issues)
+- **Email**: orassayag@gmail.com
 
 ## License
 
@@ -214,10 +303,13 @@ This application has an MIT license - see the [LICENSE](LICENSE) file for detail
 
 ## Acknowledgments
 
-- Built for educational and research purposes
-- Respects robots.txt and implements rate limiting
-- Uses user-agent rotation to avoid detection
-- Implements polite crawling practices
+Built with:
+
+- [Node.js](https://nodejs.org/) - JavaScript runtime
+- [TypeScript](https://www.typescriptlang.org/) - Type safety
+- [Enquirer](https://www.npmjs.com/package/enquirer) - Interactive prompts
+- [Vitest](https://vitest.dev/) - Testing framework
+- [tsx](https://tsx.is/) - TypeScript execution
 
 ## License
 

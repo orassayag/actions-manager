@@ -8,7 +8,8 @@ const syncDaily: ActionDefinition = {
   pauseAfterRun: false,
   run: async () => {
     const src = 'c:\\Users\\Or Assayag\\Dropbox\\or-life\\documents\\daily';
-    const dst = 'c:\\Users\\Or Assayag\\Dropbox\\or-life\\documents\\daily-backup';
+    const dst =
+      'c:\\Users\\Or Assayag\\Dropbox\\or-life\\documents\\daily-backup';
 
     const result = spawnSync('xcopy', ['/s', '/y', `"${src}"`, `"${dst}"`], {
       stdio: 'inherit',

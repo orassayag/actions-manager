@@ -7,6 +7,7 @@ const globalPackageUpdater: ActionDefinition = {
   schedulePeriod: undefined, // manual only
   pauseAfterRun: true, // was "pause" in the original bat
   run: async () => {
+    await Promise.resolve();
     const result = spawnSync('pnpm', ['run', 'start'], {
       cwd: 'C:\\Or\\web\\projects\\global-package-updater',
       stdio: 'inherit',

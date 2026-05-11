@@ -7,6 +7,7 @@ const dailyEventsBot: ActionDefinition = {
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {
+    await Promise.resolve();
     const result = spawnSync('pnpm', ['run', 'start'], {
       cwd: 'C:\\Or\\web\\projects\\daily-events-bot',
       stdio: 'inherit',

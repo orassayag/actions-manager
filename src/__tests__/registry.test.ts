@@ -8,13 +8,13 @@ describe('Actions Registry', () => {
   });
 
   it('should have unique names for all actions', () => {
-    const names = actions.map(a => a.name);
+    const names = actions.map((a) => a.name);
     const uniqueNames = new Set(names);
     expect(names.length).toBe(uniqueNames.size);
   });
 
   it('should have valid properties for all actions', () => {
-    actions.forEach(action => {
+    actions.forEach((action) => {
       expect(action).toHaveProperty('name');
       expect(action).toHaveProperty('label');
       expect(action).toHaveProperty('run');

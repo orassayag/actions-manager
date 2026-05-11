@@ -7,6 +7,7 @@ const syncAutoPackagesUpdater: ActionDefinition = {
   schedulePeriod: 'Weekly',
   pauseAfterRun: true, // was "pause" in the original bat
   run: async () => {
+    await Promise.resolve();
     const result = spawnSync('npm', ['run', 'start', '--', 'AUTO'], {
       cwd: 'C:\\Or\\web\\projects\\auto-packages-updater',
       stdio: 'inherit',

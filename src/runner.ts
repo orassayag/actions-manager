@@ -8,7 +8,7 @@ import * as readline from 'readline';
 export async function runAction(
   action: ActionDefinition,
   runType: RunType,
-  allActions: ActionDefinition[],
+  allActions: ActionDefinition[]
 ): Promise<void> {
   console.log(`\n▶  Running: ${action.label}  [${runType}]`);
   console.log('─'.repeat(50));

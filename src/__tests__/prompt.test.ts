@@ -12,7 +12,6 @@ vi.mock('enquirer', () => {
       Select: class {
         run = mockRun;
         cancel = mockCancel;
-        constructor() {}
       },
     },
   };
@@ -51,24 +50,31 @@ describe('Prompt Utility', () => {
 
   it('should handle cancel/escape in patchCancel', async () => {
     let cancelFn: Function = () => {};
+    let rejectRun: (reason?: any) => void;
+
     mockRun.mockImplementationOnce(function (this: any) {
       cancelFn = this.cancel;
-      return new Promise(() => {}); // never resolves
+      return new Promise((_, reject) => {
+        rejectRun = reject;
+      });
     });
 
-    selectWithEscape({
+    mockCancel.mockImplementationOnce(() => {
+      rejectRun(new Error('Cancelled'));
+    });
+
+    const resultPromise = selectWithEscape({
       message: 'Select something:',
       choices: [{ name: 'A', value: 'a' }],
     });
 
     // Wait a bit for the prompt to "run"
-    await new Promise((r) => setTimeout(r, 50));
+    await new Promise((r) => setTimeout(r, 10));
 
     // Trigger cancel
     cancelFn();
 
-    // The promise should now resolve with escaped: true because cancel() throws in enquirer
-    mockRun.mockRejectedValueOnce(new Error('Cancelled'));
-    // This is a bit tricky to test exactly because of the async nature, but let's at least cover the code
+    const result = await resultPromise;
+    expect(result).toEqual({ escaped: true });
   });
 });

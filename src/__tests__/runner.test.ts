@@ -20,6 +20,8 @@ describe('Runner', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     mockAction = {
       name: 'testAction',
       label: 'Test Action',
@@ -38,18 +40,17 @@ describe('Runner', () => {
       mockAction,
       'Manual',
       allActions,
-      'Running',
+      'Running'
     );
     expect(history.recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,
-      'Finished',
+      'Finished'
     );
   });
 
   it('should handle action errors gracefully', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const error = new Error('Test error');
     mockAction.run = vi.fn().mockRejectedValue(error);
 
@@ -59,30 +60,27 @@ describe('Runner', () => {
       mockAction,
       'Manual',
       allActions,
-      'Running',
+      'Running'
     );
     expect(history.recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,
-      'Error',
+      'Error'
     );
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledWith(
       expect.stringContaining('Error in "Test Action":'),
-      error,
+      error
     );
-    consoleSpy.mockRestore();
   });
 
   it('should suppress log for "exited with code" errors', async () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const error = new Error('Process exited with code 1');
     mockAction.run = vi.fn().mockRejectedValue(error);
 
     await runAction(mockAction, 'Manual', allActions);
 
-    expect(consoleSpy).not.toHaveBeenCalled();
-    consoleSpy.mockRestore();
+    expect(console.error).not.toHaveBeenCalled();
   });
 
   it('should wait for key press if pauseAfterRun is true', async () => {
@@ -98,7 +96,7 @@ describe('Runner', () => {
     expect(readline.createInterface).toHaveBeenCalled();
     expect(rlMock.question).toHaveBeenCalledWith(
       expect.stringContaining('Press Enter to close'),
-      expect.any(Function),
+      expect.any(Function)
     );
     expect(rlMock.close).toHaveBeenCalled();
   });

@@ -15,13 +15,13 @@ vi.mock('../prompt', () => ({
 describe('Index Entry Point', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => {});
   });
 
   it('should print usage and return on --help', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     await main(['--help']);
-    expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
-    consoleSpy.mockRestore();
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
   });
 
   it('should run scheduled action when argument is provided', async () => {
@@ -30,7 +30,7 @@ describe('Index Entry Point', () => {
     expect(runner.runAction).toHaveBeenCalledWith(
       actions[0],
       'Task Scheduler',
-      actions,
+      actions
     );
   });
 
@@ -47,7 +47,7 @@ describe('Index Entry Point', () => {
     expect(runner.runAction).toHaveBeenCalledWith(
       actions[0],
       'Manual',
-      actions,
+      actions
     );
   });
 
@@ -60,6 +60,40 @@ describe('Index Entry Point', () => {
     await expect(main([])).rejects.toThrow('exit');
 
     expect(processSpy).toHaveBeenCalledWith(0);
+    processSpy.mockRestore();
+  });
+
+  it('should exit with error on unknown scheduled action', async () => {
+    const processSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
+      throw new Error('exit 1');
+    });
+
+    await expect(main(['unknownAction'])).rejects.toThrow('exit 1');
+
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining('Unknown action: "unknownAction"')
+    );
+    expect(processSpy).toHaveBeenCalledWith(1);
+
+    processSpy.mockRestore();
+  });
+
+  it('should handle "should never happen" action not found in interactive mode', async () => {
+    vi.spyOn(prompt, 'selectWithEscape').mockResolvedValue({
+      escaped: false,
+      value: 'nonExistentAction',
+    });
+    const processSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
+      throw new Error('exit 1');
+    });
+
+    await expect(main([])).rejects.toThrow('exit 1');
+
+    expect(console.error).toHaveBeenCalledWith(
+      expect.stringContaining('Action not found')
+    );
+    expect(processSpy).toHaveBeenCalledWith(1);
+
     processSpy.mockRestore();
   });
 });

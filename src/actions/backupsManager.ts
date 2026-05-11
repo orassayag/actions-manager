@@ -7,13 +7,12 @@ const backupsManager: ActionDefinition = {
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {
+    await Promise.resolve();
     const batPath = 'C:\\Users\\Or Assayag\\Desktop\\automatic-backup.bat';
-
     const result = spawnSync(`"${batPath}"`, {
       stdio: 'inherit',
       shell: true,
     });
-
     if (result.status !== 0) {
       throw new Error(`backupsManager exited with code ${result.status}`);
     }

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fs from 'fs';
 import { getJerusalemTimestamp, loadHistory, recordRun } from '../history';
 import { ActionDefinition } from '../types';
@@ -34,7 +34,15 @@ describe('History', () => {
 
     it('should return parsed history if file exists', () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-      vi.spyOn(fs, 'readFileSync').mockReturnValue(JSON.stringify({ test: { lastRunAt: '2026-05-05T00:00:00Z', runType: 'Manual', status: 'Finished' } }));
+      vi.spyOn(fs, 'readFileSync').mockReturnValue(
+        JSON.stringify({
+          test: {
+            lastRunAt: '2026-05-05T00:00:00Z',
+            runType: 'Manual',
+            status: 'Finished',
+          },
+        })
+      );
       const history = loadHistory();
       expect(history.test).toBeDefined();
       expect(history.test.runType).toBe('Manual');
@@ -52,13 +60,15 @@ describe('History', () => {
     it('should save history and rebuild report', () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(false);
       const writeSpy = vi.spyOn(fs, 'writeFileSync');
-      
+
       recordRun(mockAction, 'Manual', [mockAction]);
-      
+
       // Should call writeFileSync at least twice (one for history.json, one for report)
       expect(writeSpy).toHaveBeenCalledTimes(2);
-      
-      const historyCall = writeSpy.mock.calls.find(call => call[0].toString().includes('history.json'));
+
+      const historyCall = writeSpy.mock.calls.find((call) =>
+        call[0].toString().includes('history.json')
+      );
       expect(historyCall).toBeDefined();
       const savedHistory = JSON.parse(historyCall![1] as string);
       expect(savedHistory.testAction.runType).toBe('Manual');
