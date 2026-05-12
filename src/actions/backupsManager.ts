@@ -8,13 +8,13 @@ const backupsManager: ActionDefinition = {
   pauseAfterRun: false,
   run: async () => {
     await Promise.resolve();
-    const batPath = 'C:\\Users\\Or Assayag\\Desktop\\automatic-backup.bat';
-    const result = spawnSync(`"${batPath}"`, {
+    const result = spawnSync('pnpm', ['run', 'sync'], {
+      cwd: 'C:\\Or\\web\\projects\\backups-manager',
       stdio: 'inherit',
       shell: true,
     });
     if (result.status !== 0) {
-      throw new Error(`backupsManager exited with code ${result.status}`);
+      throw new Error(`Process exited with code ${result.status}`);
     }
   },
 };
