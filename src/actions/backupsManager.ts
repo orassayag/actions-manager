@@ -1,5 +1,5 @@
 import { ActionDefinition } from '../types';
-import { spawnSync } from 'child_process';
+import { spawn } from 'child_process';
 
 const backupsManager: ActionDefinition = {
   name: 'backupsManager',
@@ -7,15 +7,25 @@ const backupsManager: ActionDefinition = {
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {
-    await Promise.resolve();
-    const result = spawnSync('pnpm', ['run', 'sync'], {
-      cwd: 'C:\\Or\\web\\projects\\backups-manager',
-      stdio: 'inherit',
-      shell: true,
+    await new Promise<void>((resolve, reject) => {
+      const child = spawn('pnpm', ['run', 'sync'], {
+        cwd: 'C:\\Or\\web\\projects\\backups-manager',
+        stdio: 'inherit',
+        shell: true,
+      });
+
+      child.on('exit', (code) => {
+        if (code === 0) {
+          resolve();
+        } else {
+          reject(new Error(`Process exited with code ${code}`));
+        }
+      });
+
+      child.on('error', (err) => {
+        reject(err);
+      });
     });
-    if (result.status !== 0) {
-      throw new Error(`Process exited with code ${result.status}`);
-    }
   },
 };
 

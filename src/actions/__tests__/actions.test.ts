@@ -11,6 +11,7 @@ import backupsManager from '../backupsManager';
 
 vi.mock('child_process', () => ({
   spawnSync: vi.fn(),
+  spawn: vi.fn(),
 }));
 
 describe('Actions Implementation', () => {
@@ -28,20 +29,36 @@ describe('Actions Implementation', () => {
     { action: backupsManager, name: 'backupsManager' },
   ];
 
+  const mockProcessResult = (status: number): void => {
+    vi.mocked(child_process.spawnSync).mockReturnValue({
+      status,
+    } as any);
+
+    const mockChild = {
+      on: vi.fn((event: string, callback: (code: number) => void): any => {
+        if (event === 'exit') {
+          setTimeout(() => callback(status), 0);
+        }
+        return mockChild;
+      }),
+    };
+    vi.mocked(child_process.spawn).mockReturnValue(mockChild as any);
+  };
+
   actions.forEach(({ action, name }) => {
     describe(name, () => {
       it('should execute successfully', async () => {
-        vi.spyOn(child_process, 'spawnSync').mockReturnValue({
-          status: 0,
-        } as any);
+        mockProcessResult(0);
         await action.run();
-        expect(child_process.spawnSync).toHaveBeenCalled();
+        const spawnSyncCalled =
+          vi.mocked(child_process.spawnSync).mock.calls.length > 0;
+        const spawnCalled =
+          vi.mocked(child_process.spawn).mock.calls.length > 0;
+        expect(spawnSyncCalled || spawnCalled).toBe(true);
       });
 
       it('should throw error if process fails', async () => {
-        vi.spyOn(child_process, 'spawnSync').mockReturnValue({
-          status: 1,
-        } as any);
+        mockProcessResult(1);
         await expect(action.run()).rejects.toThrow(/exited with code 1/);
       });
     });
@@ -49,9 +66,7 @@ describe('Actions Implementation', () => {
 
   describe('syncDaily', () => {
     it('should execute xcopy successfully', async () => {
-      vi.spyOn(child_process, 'spawnSync').mockReturnValue({
-        status: 0,
-      } as any);
+      mockProcessResult(0);
       // Mock setTimeout to avoid waiting 5 seconds in tests
       vi.useFakeTimers();
       const promise = syncDaily.run();
@@ -66,9 +81,7 @@ describe('Actions Implementation', () => {
     });
 
     it('should throw error if xcopy fails', async () => {
-      vi.spyOn(child_process, 'spawnSync').mockReturnValue({
-        status: 4,
-      } as any);
+      mockProcessResult(4);
       await expect(syncDaily.run()).rejects.toThrow(/xcopy exited with code 4/);
     });
   });
