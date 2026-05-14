@@ -4,6 +4,7 @@ import { spawn } from 'child_process';
 const backupsManager: ActionDefinition = {
   name: 'backupsManager',
   label: 'Backups Manager',
+  taskName: 'backupsManager',
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {

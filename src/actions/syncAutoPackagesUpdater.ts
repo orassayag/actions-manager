@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 const syncAutoPackagesUpdater: ActionDefinition = {
   name: 'syncAutoPackagesUpdater',
   label: 'Auto Packages Updater',
+  taskName: 'syncAutoPackagesUpdater',
   schedulePeriod: 'Weekly',
   pauseAfterRun: true, // was "pause" in the original bat
   run: async () => {

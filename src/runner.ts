@@ -14,16 +14,16 @@ export async function runAction(
   console.log('─'.repeat(50));
 
   // Record START of run
-  recordRun(action, runType, allActions, 'Running');
+  await recordRun(action, runType, allActions, 'Running');
 
   try {
     await action.run();
     console.log(`\n✅  Finished: ${action.label}`);
     // Record SUCCESSFUL end of run
-    recordRun(action, runType, allActions, 'Finished');
+    await recordRun(action, runType, allActions, 'Finished');
   } catch (err: any) {
     // Record ERROR end of run
-    recordRun(action, runType, allActions, 'Error');
+    await recordRun(action, runType, allActions, 'Error');
     if (err instanceof Error && err.message.includes('exited with code')) {
       // Silence expected process exit errors since child process already printed them
     } else {

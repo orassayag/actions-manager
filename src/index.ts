@@ -2,6 +2,7 @@ import actions from './registry';
 import { runAction } from './runner';
 import { ActionDefinition } from './types';
 import { selectWithEscape } from './prompt';
+import { refreshReport } from './history';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -62,6 +63,9 @@ async function runInteractive(): Promise<void> {
 
 export async function main(args: string[]): Promise<void> {
   const arg = args[0];
+
+  // Always refresh report on startup to sync with Task Scheduler triggers
+  await refreshReport(actions);
 
   if (arg === '--help' || arg === '-h') {
     printUsage();

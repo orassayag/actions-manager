@@ -18,6 +18,11 @@ export interface ActionDefinition {
   /** Human-readable label shown in dropdown and report */
   label: string;
   /**
+   * The name of the task in Windows Task Scheduler.
+   * If undefined, the action is considered manual only.
+   */
+  taskName?: string;
+  /**
    * Scheduling period label shown in ACTIONS_REPORT.txt.
    * Set to undefined for actions that are only run manually.
    * e.g. "Daily", "Weekly", "Monthly"

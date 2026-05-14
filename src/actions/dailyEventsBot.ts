@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 const dailyEventsBot: ActionDefinition = {
   name: 'dailyEventsBot',
   label: 'Daily Events Bot',
+  taskName: 'dailyEventsBot',
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {

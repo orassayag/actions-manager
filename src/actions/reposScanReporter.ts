@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 const reposScanReporter: ActionDefinition = {
   name: 'reposScanReporter',
   label: 'Repos Scan Reporter',
+  taskName: 'reposScanReporter',
   schedulePeriod: 'Weekly',
   pauseAfterRun: false,
   run: async () => {

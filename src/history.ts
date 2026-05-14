@@ -8,6 +8,7 @@ import {
   RunStatus,
 } from './types';
 import { settings } from './settings';
+import { getTasksWithTriggers, formatTrigger } from './scheduler';
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
@@ -76,35 +77,62 @@ function saveHistory(history: ActionHistoryMap): void {
  * Rebuilds ACTIONS_REPORT.txt from the current history + action definitions.
  * Actions with no history yet are listed with "Never" as the last run time.
  */
-function rebuildReport(
+async function rebuildReport(
   actions: ActionDefinition[],
   history: ActionHistoryMap
-): void {
+): Promise<void> {
   ensureDataDir();
 
+  const scheduledTasks = await getTasksWithTriggers();
+
   // Column widths
-  const COL1 = 32; // Action label
-  const COL2 = 28; // Run type + period
+  const COL1 = 25; // Action label
+  const COL2 = 15; // Last Run Type
+  const COL3 = 17; // Frequency
 
   const header =
-    pad('Action', COL1) + '| ' + pad('Run Type', COL2) + '| ' + 'Last Run';
-  const separator = '-'.repeat(COL1) + '+' + '-'.repeat(COL2 + 2);
+    pad('Action', COL1) +
+    ' | ' +
+    pad('Last Run Type', COL2) +
+    ' | ' +
+    pad('Frequency', COL3) +
+    ' | ' +
+    'Last Run';
+  const separator =
+    '-'.repeat(COL1 + 1) +
+    '+' +
+    '-'.repeat(COL2 + 2) +
+    '+' +
+    '-'.repeat(COL3 + 2) +
+    '+';
 
   const rows = actions.map((action) => {
     const h = history[action.name];
 
-    let runTypeLabel: string;
+    let runTypeLabel = h ? h.runType : '-';
     let lastRun: string;
 
+    // Get frequency from Task Scheduler if taskName is provided
+    let frequency = 'Never';
+    if (action.taskName) {
+      const task = scheduledTasks.find((t) => t.TaskName === action.taskName);
+      if (task && task.Triggers) {
+        const triggers = Array.isArray(task.Triggers)
+          ? task.Triggers
+          : [task.Triggers];
+        const activeTrigger = triggers.find((t) => t.Enabled);
+        if (activeTrigger) {
+          frequency = formatTrigger(activeTrigger);
+        }
+      }
+    } else if (action.schedulePeriod) {
+      // Fallback to schedulePeriod if taskName is not found or not provided
+      frequency = action.schedulePeriod;
+    }
+
     if (!h) {
-      runTypeLabel = '-';
       lastRun = 'Never';
     } else {
-      runTypeLabel =
-        h.runType === 'Task Scheduler' && h.period
-          ? `Task Scheduler (${h.period})`
-          : h.runType;
-
       // Re-format stored ISO → Jerusalem display format
       const d = new Date(h.lastRunAt);
       lastRun = d
@@ -122,7 +150,13 @@ function rebuildReport(
     }
 
     return (
-      pad(action.label, COL1) + '| ' + pad(runTypeLabel, COL2) + '| ' + lastRun
+      pad(action.label, COL1) +
+      ' | ' +
+      pad(runTypeLabel, COL2) +
+      ' | ' +
+      pad(frequency, COL3) +
+      ' | ' +
+      lastRun
     );
   });
 
@@ -140,14 +174,24 @@ function pad(str: string, width: number): string {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
+ * Rebuilds the report without recording a new run.
+ */
+export async function refreshReport(
+  actions: ActionDefinition[]
+): Promise<void> {
+  const history = loadHistory();
+  await rebuildReport(actions, history);
+}
+
+/**
  * Records a run in history.json and rebuilds ACTIONS_REPORT.txt.
  */
-export function recordRun(
+export async function recordRun(
   action: ActionDefinition,
   runType: RunType,
   allActions: ActionDefinition[],
   status: RunStatus = 'Finished'
-): void {
+): Promise<void> {
   const history = loadHistory();
 
   history[action.name] = {
@@ -158,5 +202,5 @@ export function recordRun(
   };
 
   saveHistory(history);
-  rebuildReport(allActions, history);
+  await rebuildReport(allActions, history);
 }

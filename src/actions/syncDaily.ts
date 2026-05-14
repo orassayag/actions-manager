@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 const syncDaily: ActionDefinition = {
   name: 'syncDaily',
   label: 'Sync Daily Documents',
+  taskName: 'syncDaily',
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
   run: async () => {

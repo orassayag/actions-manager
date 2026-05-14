@@ -4,6 +4,7 @@ import { spawnSync } from 'child_process';
 const contactsScanMaintainer: ActionDefinition = {
   name: 'contactsScanMaintainer',
   label: 'Contacts Scan Maintainer',
+  taskName: 'contactsScanMaintainer',
   schedulePeriod: 'Weekly',
   pauseAfterRun: false,
   run: async () => {

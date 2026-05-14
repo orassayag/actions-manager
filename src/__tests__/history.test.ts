@@ -1,9 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import * as fs from 'fs';
 import { getJerusalemTimestamp, loadHistory, recordRun } from '../history';
-import { ActionDefinition } from '../types';
+import { ActionDefinition } from '../types'; 
 
 vi.mock('fs');
+vi.mock('../scheduler', () => ({
+  getTasksWithTriggers: vi.fn().mockResolvedValue([]),
+  formatTrigger: vi.fn().mockReturnValue('Mock Frequency'),
+}));
 
 describe('History', () => {
   const mockAction: ActionDefinition = {
@@ -57,11 +61,11 @@ describe('History', () => {
   });
 
   describe('recordRun', () => {
-    it('should save history and rebuild report', () => {
+    it('should save history and rebuild report', async () => {
       vi.spyOn(fs, 'existsSync').mockReturnValue(false);
       const writeSpy = vi.spyOn(fs, 'writeFileSync');
 
-      recordRun(mockAction, 'Manual', [mockAction]);
+      await recordRun(mockAction, 'Manual', [mockAction]);
 
       // Should call writeFileSync at least twice (one for history.json, one for report)
       expect(writeSpy).toHaveBeenCalledTimes(2);
