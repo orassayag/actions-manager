@@ -86,9 +86,9 @@ async function rebuildReport(
   const scheduledTasks = await getTasksWithTriggers();
 
   // Column widths
-  const COL1 = 25; // Action label
-  const COL2 = 15; // Last Run Type
-  const COL3 = 17; // Frequency
+  const COL1 = 24; // Action label
+  const COL2 = 14; // Last Run Type
+  const COL3 = 16; // Frequency
 
   const header =
     pad('Action', COL1) +
