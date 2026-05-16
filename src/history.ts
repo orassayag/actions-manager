@@ -85,7 +85,87 @@ async function rebuildReport(
 
   const scheduledTasks = await getTasksWithTriggers();
 
-  // Column widths
+  // 1. Gather row data for sorting
+  const rowData = actions.map((action) => {
+    const h = history[action.name];
+
+    let runTypeLabel = h ? h.runType : '-';
+    let frequency = 'Never';
+
+    // Get frequency from Task Scheduler if taskName is provided
+    if (action.taskName) {
+      const task = scheduledTasks.find((t) => t.TaskName === action.taskName);
+      if (task && task.Triggers) {
+        const triggers = Array.isArray(task.Triggers)
+          ? task.Triggers
+          : [task.Triggers];
+        const activeTrigger = triggers.find((t) => t.Enabled);
+        if (activeTrigger) {
+          frequency = formatTrigger(activeTrigger);
+        }
+      }
+    } else if (action.schedulePeriod) {
+      // Fallback to schedulePeriod if taskName is not found or not provided
+      frequency = action.schedulePeriod;
+    }
+
+    let lastRunDisplay: string;
+    let lastRunTimestamp: number;
+
+    if (!h) {
+      lastRunDisplay = 'Never';
+      lastRunTimestamp = 0; // Epoch for "Never" run
+    } else {
+      // Re-format stored ISO → Jerusalem display format
+      const d = new Date(h.lastRunAt);
+      lastRunTimestamp = d.getTime();
+      lastRunDisplay = d
+        .toLocaleString('en-GB', {
+          timeZone: 'Asia/Jerusalem',
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+          hour12: false,
+        })
+        .replace(',', '');
+    }
+
+    return {
+      label: action.label,
+      runTypeLabel,
+      frequency,
+      lastRunDisplay,
+      lastRunTimestamp,
+    };
+  });
+
+  // 2. Sort row data
+  // Order: Daily -> Weekly -> Others -> Never
+  // Each category: From early to late on "Last Run" (chronological)
+  const getFrequencyPriority = (freq: string): number => {
+    const f = freq.toLowerCase();
+    if (f.startsWith('daily')) return 1;
+    if (f.startsWith('weekly')) return 2;
+    if (f === 'never') return 4;
+    return 3; // Monthly, Manual, Startup, etc.
+  };
+
+  rowData.sort((a, b) => {
+    const prioA = getFrequencyPriority(a.frequency);
+    const prioB = getFrequencyPriority(b.frequency);
+
+    if (prioA !== prioB) {
+      return prioA - prioB;
+    }
+
+    // Within same category, sort by timestamp (early to late)
+    return a.lastRunTimestamp - b.lastRunTimestamp;
+  });
+
+  // 3. Format rows
   const COL1 = 24; // Action label
   const COL2 = 14; // Last Run Type
   const COL3 = 16; // Frequency
@@ -106,57 +186,15 @@ async function rebuildReport(
     '-'.repeat(COL3 + 2) +
     '+';
 
-  const rows = actions.map((action) => {
-    const h = history[action.name];
-
-    let runTypeLabel = h ? h.runType : '-';
-    let lastRun: string;
-
-    // Get frequency from Task Scheduler if taskName is provided
-    let frequency = 'Never';
-    if (action.taskName) {
-      const task = scheduledTasks.find((t) => t.TaskName === action.taskName);
-      if (task && task.Triggers) {
-        const triggers = Array.isArray(task.Triggers)
-          ? task.Triggers
-          : [task.Triggers];
-        const activeTrigger = triggers.find((t) => t.Enabled);
-        if (activeTrigger) {
-          frequency = formatTrigger(activeTrigger);
-        }
-      }
-    } else if (action.schedulePeriod) {
-      // Fallback to schedulePeriod if taskName is not found or not provided
-      frequency = action.schedulePeriod;
-    }
-
-    if (!h) {
-      lastRun = 'Never';
-    } else {
-      // Re-format stored ISO → Jerusalem display format
-      const d = new Date(h.lastRunAt);
-      lastRun = d
-        .toLocaleString('en-GB', {
-          timeZone: 'Asia/Jerusalem',
-          day: '2-digit',
-          month: '2-digit',
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit',
-          second: '2-digit',
-          hour12: false,
-        })
-        .replace(',', '');
-    }
-
+  const rows = rowData.map((data) => {
     return (
-      pad(action.label, COL1) +
+      pad(data.label, COL1) +
       ' | ' +
-      pad(runTypeLabel, COL2) +
+      pad(data.runTypeLabel, COL2) +
       ' | ' +
-      pad(frequency, COL3) +
+      pad(data.frequency, COL3) +
       ' | ' +
-      lastRun
+      data.lastRunDisplay
     );
   });
 
