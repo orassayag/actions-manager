@@ -5,12 +5,12 @@ const syncAutoPackagesUpdater: ActionDefinition = {
   name: 'syncAutoPackagesUpdater',
   label: 'Auto Packages Updater',
   taskName: 'syncAutoPackagesUpdater',
-  schedulePeriod: 'Weekly',
-  pauseAfterRun: true, // was "pause" in the original bat
+  schedulePeriod: 'Daily',
+  pauseAfterRun: false,
   run: async () => {
     await Promise.resolve();
-    const result = spawnSync('npm', ['run', 'start', '--', 'AUTO'], {
-      cwd: 'C:\\Or\\web\\projects\\auto-packages-updater',
+    const result = spawnSync('npm', ['run', 'sync'], {
+      cwd: 'C:\\Or\\web\\projects\\auto-packages-updater-ts',
       stdio: 'inherit',
       shell: true,
     });

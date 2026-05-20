@@ -23,9 +23,9 @@ exit
 
 syncAutoPackagesUpdater.bat:
 
-cd "C:\Or\web\projects\auto-packages-updater"
-npm run start -- AUTO
-pause
+cd "C:\Or\web\projects\auto-packages-updater-ts"
+npm run sync
+
 
 ===================
 
