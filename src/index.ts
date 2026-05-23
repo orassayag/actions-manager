@@ -64,9 +64,6 @@ async function runInteractive(): Promise<void> {
 export async function main(args: string[]): Promise<void> {
   const arg = args[0];
 
-  // Always refresh report on startup to sync with Task Scheduler triggers
-  await refreshReport(actions);
-
   if (arg === '--help' || arg === '-h') {
     printUsage();
     return;
@@ -74,10 +71,21 @@ export async function main(args: string[]): Promise<void> {
 
   if (arg) {
     // Called by Task Scheduler with an action name argument
+    // Always refresh report on startup to sync with Task Scheduler triggers
+    await refreshReport(actions);
     await runScheduled(arg);
   } else {
     // Called manually — show interactive picker
+    // Run refreshReport in background to keep the menu snappy
+    const refreshPromise = refreshReport(actions).catch((err) => {
+      console.error('Failed to refresh report in background:', err);
+    });
+
     await runInteractive();
+
+    // Ensure refresh finishes before exiting if we didn't run an action
+    // (Though runInteractive calls runAction which also records/refreshes)
+    await refreshPromise;
   }
 }
 

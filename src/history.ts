@@ -83,7 +83,10 @@ async function rebuildReport(
 ): Promise<void> {
   ensureDataDir();
 
-  const scheduledTasks = await getTasksWithTriggers();
+  const taskNames = actions
+    .map((a) => a.taskName)
+    .filter((name): name is string => !!name);
+  const scheduledTasks = await getTasksWithTriggers(taskNames);
 
   // 1. Gather row data for sorting
   const rowData = actions.map((action) => {

@@ -21,10 +21,19 @@ export interface ScheduledTask {
   Description: string;
 }
 
-export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
+export async function getTasksWithTriggers(
+  taskNames?: string[]
+): Promise<ScheduledTask[]> {
+  const taskFilter =
+    taskNames && taskNames.length > 0
+      ? `$taskNames = @(${taskNames.map((n) => `'${n}'`).join(',')})
+         $tasks = $taskNames | ForEach-Object { Get-ScheduledTask -TaskName $_ -ErrorAction SilentlyContinue }`
+      : `$tasks = Get-ScheduledTask | Where-Object { $_.Triggers -ne $null }`;
+
   const psCommand = `
     $ErrorActionPreference = 'SilentlyContinue'
-    $tasks = Get-ScheduledTask | Where-Object { $_.Triggers -ne $null } | ForEach-Object {
+    ${taskFilter}
+    $report = $tasks | ForEach-Object {
       $task = $_
       [PSCustomObject]@{
         TaskName = $task.TaskName
@@ -38,7 +47,7 @@ export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
         }
       }
     }
-    if ($tasks) { $tasks | ConvertTo-Json -Depth 3 } else { "[]" }
+    if ($report) { $report | ConvertTo-Json -Depth 3 } else { "[]" }
   `;
 
   try {
