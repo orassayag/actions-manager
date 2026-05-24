@@ -44,7 +44,11 @@
     "test:watch": "cross-env NODE_OPTIONS='--no-warnings' vitest",
     "test:no-coverage": "cross-env NODE_OPTIONS='--no-warnings' vitest run",
     "test:ui": "vitest --ui",
-    "build": "tsc"
+    "build": "tsc",
+    "watchdog:install": "ts-node src/watchdog/services/install-watchdog-service.ts",
+    "watchdog:uninstall": "ts-node src/watchdog/services/uninstall-watchdog-service.ts",
+    "watchdog:dev": "tsx src/watchdog/watchdog.ts",
+    "watchdog:run": "tsx src/watchdog/manual-trigger.ts"
   },
   "author": {
     "name": "Or Assayag",
@@ -97,12 +101,15 @@
     "pnpm": ">=8.0.0"
   },
   "dependencies": {
-    "enquirer": "^2.4.1"
+    "enquirer": "^2.4.1",
+    "node-cron": "^4.2.1",
+    "node-windows": "1.0.0-beta.8"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@rolldown/binding-win32-x64-msvc": "^1.0.2",
     "@types/node": "^25.9.1",
+    "@types/node-cron": "^3.0.11",
     "@typescript-eslint/eslint-plugin": "^8.59.4",
     "@typescript-eslint/parser": "^8.59.4",
     "@vitest/coverage-istanbul": "^4.1.7",
@@ -112,6 +119,7 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",
     "prettier": "^3.8.3",
+    "ts-node": "^10.9.2",
     "tsx": "^4.22.3",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.4",

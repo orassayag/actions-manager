@@ -1,0 +1,35 @@
+<service>
+	<id>actionsmanagerwatchdog.exe</id>
+	<name>ActionsManagerWatchdog</name>
+	<description>Checks overnight Task Scheduler actions at 08:00 and recovers missed ones.</description>
+	<executable>C:\Program Files\nodejs\node.exe</executable>
+	<argument>--import</argument>
+	<argument>tsx</argument>
+	<argument>--no-warnings</argument>
+	<argument>C:\Or\web\projects\actions-manager\node_modules\.pnpm\node-windows@1.0.0-beta.8\node_modules\node-windows\lib\wrapper.js</argument>
+	<argument>--file</argument>
+	<argument>C:\Or\web\projects\actions-manager\src\watchdog\watchdog.ts</argument>
+	<argument>--scriptoptions=</argument>
+	<argument>--log</argument>
+	<argument>ActionsManagerWatchdog wrapper</argument>
+	<argument>--grow</argument>
+	<argument>0.25</argument>
+	<argument>--wait</argument>
+	<argument>1</argument>
+	<argument>--maxrestarts</argument>
+	<argument>3</argument>
+	<argument>--abortonerror</argument>
+	<argument>n</argument>
+	<argument>--stopparentfirst</argument>
+	<argument>undefined</argument>
+	<logmode>rotate</logmode>
+	<stoptimeout>30sec</stoptimeout>
+	<env name="NODE_ENV" value="production"/>
+	<env name="PATH" value="C:\Or\web\projects\actions-manager\node_modules\.bin;C:\Users\Or Assayag\AppData\Local\pnpm\global\5\.pnpm\@pnpm+exe@file+..+..+..+Temp+2ee7d2e1-ac4b-4fae-9080-524e778fe249_gv7lgkgto56lkrzhecuhfi35ke\node_modules\@pnpm\exe\dist\node-gyp-bin;C:\Or\web\projects\actions-manager\node_modules\.bin;c:\\Users\\Or Assayag\\.trae\\tools\\trae-gopls\\current;c:\\Users\\Or Assayag\\.trae\\sdks\\workspaces\\1fa88142\\versions\\node\\current;c:\\Users\\Or Assayag\\.trae\\sdks\\versions\\node\\current;c:\Users\Or Assayag\.trae\tools\trae-gopls\current;c:\Users\Or Assayag\.trae\sdks\workspaces\1fa88142\versions\node\current;c:\Users\Or Assayag\.trae\sdks\versions\node\current;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files\cursor\resources\app\bin;C:\Program Files\Git\cmd;C:\Program Files\nodejs\;C:\Users\Or Assayag\AppData\Local\pnpm\bin;C:\Users\Or Assayag\AppData\Local\pnpm;C:\Users\Or Assayag\AppData\Local\Microsoft\WindowsApps;C:\Users\Or Assayag\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\Or Assayag\AppData\Local\Programs\mongosh\;C:\Users\Or Assayag\AppData\Local\Programs\Antigravity\bin;C:\Users\Or Assayag\AppData\Roaming\npm;C:\Users\Or Assayag\AppData\Local\Programs\Antigravity IDE\bin"/>
+	<serviceaccount>
+		<domain>DESKTOP-NEV22SH</domain>
+		<user>LocalSystem</user>
+		<password></password>
+	</serviceaccount>
+	<workingdirectory>C:\Or\web\projects\actions-manager</workingdirectory>
+</service>
