@@ -71,8 +71,10 @@ export async function main(args: string[]): Promise<void> {
 
   if (arg) {
     // Called by Task Scheduler with an action name argument
-    // Always refresh report on startup to sync with Task Scheduler triggers
-    await refreshReport(actions);
+    // Run refreshReport in background so it doesn't block the action execution
+    refreshReport(actions).catch((err) => {
+      console.error('Failed to refresh report in background:', err);
+    });
     await runScheduled(arg);
   } else {
     // Called manually — show interactive picker

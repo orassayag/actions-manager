@@ -24,15 +24,20 @@ export interface ScheduledTask {
 export async function getTasksWithTriggers(
   taskNames?: string[]
 ): Promise<ScheduledTask[]> {
-  const taskFilter =
+  const namesArray =
     taskNames && taskNames.length > 0
-      ? `$taskNames = @(${taskNames.map((n) => `'${n}'`).join(',')})
-         $tasks = $taskNames | ForEach-Object { Get-ScheduledTask -TaskName $_ -ErrorAction SilentlyContinue }`
-      : `$tasks = Get-ScheduledTask | Where-Object { $_.Triggers -ne $null }`;
+      ? `@(${taskNames.map((n) => `'${n}'`).join(',')})`
+      : '@()';
 
   const psCommand = `
     $ErrorActionPreference = 'SilentlyContinue'
-    ${taskFilter}
+    $names = ${namesArray}
+    # Get all tasks and filter by name and presence of triggers
+    # We get all tasks first to ensure we find them regardless of which folder they are in
+    $tasks = Get-ScheduledTask | Where-Object { 
+      ($names.Count -eq 0 -or $names -contains $_.TaskName) -and $_.Triggers -ne $null
+    }
+
     $report = $tasks | ForEach-Object {
       $task = $_
       [PSCustomObject]@{
@@ -51,12 +56,14 @@ export async function getTasksWithTriggers(
   `;
 
   try {
-    // Use Base64 encoding for the command to avoid parsing issues with newlines and quotes
     const encodedCommand = Buffer.from(psCommand, 'utf16le').toString('base64');
 
     const { stdout } = await execAsync(
       `powershell -NoProfile -ExecutionPolicy Bypass -EncodedCommand ${encodedCommand}`,
-      { maxBuffer: 1024 * 1024 * 10 } // 10MB buffer for large task lists
+      {
+        maxBuffer: 1024 * 1024 * 10,
+        timeout: 30000, // 30 second timeout to prevent hanging the whole process
+      }
     );
 
     if (!stdout.trim()) return [];

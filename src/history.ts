@@ -8,7 +8,11 @@ import {
   RunStatus,
 } from './types';
 import { settings } from './settings';
-import { getTasksWithTriggers, formatTrigger } from './scheduler';
+import {
+  getTasksWithTriggers,
+  formatTrigger,
+  ScheduledTask,
+} from './scheduler';
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
@@ -18,6 +22,9 @@ const __dirname = path.dirname(__filename);
 const DATA_DIR = path.join(__dirname, '..', 'data');
 const HISTORY_FILE = path.join(DATA_DIR, 'history.json');
 const REPORT_FILE = settings.reportPath;
+
+// Cache for scheduled tasks to avoid multiple expensive PowerShell calls per execution
+let cachedScheduledTasks: ScheduledTask[] | null = null;
 
 function ensureDataDir(): void {
   if (!fs.existsSync(DATA_DIR)) {
@@ -83,10 +90,13 @@ async function rebuildReport(
 ): Promise<void> {
   ensureDataDir();
 
-  const taskNames = actions
-    .map((a) => a.taskName)
-    .filter((name): name is string => !!name);
-  const scheduledTasks = await getTasksWithTriggers(taskNames);
+  if (!cachedScheduledTasks) {
+    const taskNames = actions
+      .map((a) => a.taskName)
+      .filter((name): name is string => !!name);
+    cachedScheduledTasks = await getTasksWithTriggers(taskNames);
+  }
+  const scheduledTasks = cachedScheduledTasks;
 
   // 1. Gather row data for sorting
   const rowData = actions.map((action) => {
