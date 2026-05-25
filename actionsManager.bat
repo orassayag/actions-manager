@@ -5,16 +5,8 @@ REM
 REM  Usage:
 REM    actionsManager.bat                  → interactive dropdown (manual)
 REM    actionsManager.bat dailyEventsBot   → run specific action (Task Scheduler)
-REM
-REM  Note: If the window seems to freeze, try pressing Enter.
-REM  This is often caused by Windows Console "QuickEdit Mode".
 REM ============================================================
 
 cd /d "C:\Or\web\projects\actions-manager"
 set NODE_NO_WARNINGS=1
-
-if "%~1"=="" (
-    echo Starting interactive menu...
-)
-
 pnpm start %*
