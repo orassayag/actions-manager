@@ -65,7 +65,13 @@ export async function main(args: string[]): Promise<void> {
   const arg = args[0];
 
   // Always refresh report on startup to sync with Task Scheduler triggers
-  await refreshReport(actions);
+  try {
+    await refreshReport(actions);
+  } catch (_err) {
+    // If report refresh fails (e.g. file lock), we log and continue
+    // The individual actions will also handle this via runAction -> recordRun
+    console.warn('⚠️  Warning: Initial report refresh failed. Continuing...');
+  }
 
   if (arg === '--help' || arg === '-h') {
     printUsage();

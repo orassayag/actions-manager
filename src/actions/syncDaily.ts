@@ -17,6 +17,10 @@ const syncDaily: ActionDefinition = {
       shell: true,
     });
 
+    if (result.error) {
+      throw result.error;
+    }
+
     if (result.status !== 0) {
       throw new Error(`xcopy exited with code ${result.status}`);
     }

@@ -9,11 +9,16 @@ const contactsScanMaintainer: ActionDefinition = {
   pauseAfterRun: false,
   run: async () => {
     await Promise.resolve();
-    const result = spawnSync('npm', ['run', 'start', '--', 'AUTO'], {
+    const result = spawnSync('pnpm', ['run', 'start', '--', 'AUTO'], {
       cwd: 'C:\\Or\\web\\projects\\events-and-people-syncer',
       stdio: 'inherit',
       shell: true,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
+
     if (result.status !== 0) {
       throw new Error(`Process exited with code ${result.status}`);
     }

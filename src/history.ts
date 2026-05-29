@@ -200,7 +200,18 @@ async function rebuildReport(
 
   const updatedAt = `Last Updated: ${getJerusalemTimestamp()}`;
   const lines = [updatedAt, '', header, separator, ...rows, ''];
-  fs.writeFileSync(REPORT_FILE, lines.join('\n'), 'utf-8');
+
+  try {
+    fs.writeFileSync(REPORT_FILE, lines.join('\n'), 'utf-8');
+  } catch (err: any) {
+    if (err.code === 'EPERM' || err.code === 'EBUSY') {
+      console.warn(
+        `\n⚠️  Warning: Could not update report file at ${REPORT_FILE}. It might be open in another program. Execution will continue.`
+      );
+    } else {
+      console.error(`\n❌  Error writing report file: ${err.message}`);
+    }
+  }
 }
 
 function pad(str: string, width: number): string {
