@@ -3,6 +3,7 @@ import { runAction } from './runner';
 import { ActionDefinition } from './types';
 import { selectWithEscape } from './prompt';
 import { refreshReport } from './history';
+import { logger } from './logging';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -22,8 +23,10 @@ function printUsage(): void {
 // ─── Task Scheduler mode ──────────────────────────────────────────────────────
 
 async function runScheduled(actionName: string): Promise<void> {
+  logger.info(`Running in scheduled mode for action: ${actionName}`);
   const action = findAction(actionName);
   if (!action) {
+    logger.error(`Unknown action requested in scheduled mode: ${actionName}`);
     console.error(`\n❌  Unknown action: "${actionName}"`);
     printUsage();
     process.exit(1);
@@ -34,6 +37,7 @@ async function runScheduled(actionName: string): Promise<void> {
 // ─── Manual / interactive mode ────────────────────────────────────────────────
 
 async function runInteractive(): Promise<void> {
+  logger.info('Running in interactive mode');
   const choices = actions.map((a) => ({
     name: a.label,
     value: a.name,
@@ -46,12 +50,15 @@ async function runInteractive(): Promise<void> {
   });
 
   if (escaped || !selectedAction) {
+    logger.info('User escaped interactive mode');
     console.log('\nBye! 👋');
     process.exit(0);
   }
 
+  logger.info(`Action selected interactively: ${selectedAction}`);
   const action = findAction(selectedAction);
   if (!action) {
+    logger.error(`Action not found after selection: ${selectedAction}`);
     console.error('Action not found — this should never happen.');
     process.exit(1);
   }
@@ -63,17 +70,21 @@ async function runInteractive(): Promise<void> {
 
 export async function main(args: string[]): Promise<void> {
   const arg = args[0];
+  logger.info('App started', { args });
 
   // Always refresh report on startup to sync with Task Scheduler triggers
   try {
+    logger.debug('Refreshing report on startup');
     await refreshReport(actions);
-  } catch (_err) {
+  } catch (err) {
     // If report refresh fails (e.g. file lock), we log and continue
     // The individual actions will also handle this via runAction -> recordRun
+    logger.warn('Initial report refresh failed', { error: err });
     console.warn('⚠️  Warning: Initial report refresh failed. Continuing...');
   }
 
   if (arg === '--help' || arg === '-h') {
+    logger.info('Help requested');
     printUsage();
     return;
   }
@@ -90,6 +101,7 @@ export async function main(args: string[]): Promise<void> {
 /* istanbul ignore next */
 if (import.meta.url === `file:///${process.argv[1].replace(/\\/g, '/')}`) {
   main(process.argv.slice(2)).catch((err) => {
+    logger.error('Unhandled error in main', err);
     console.error(err);
     process.exit(1);
   });

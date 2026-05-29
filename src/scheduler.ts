@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { logger } from './logging';
 
 const execAsync = promisify(exec);
 
@@ -22,6 +23,7 @@ export interface ScheduledTask {
 }
 
 export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
+  logger.debug('Fetching scheduled tasks with triggers from PowerShell');
   const psCommand = `
     $ErrorActionPreference = 'SilentlyContinue'
     $tasks = Get-ScheduledTask | Where-Object { $_.Triggers -ne $null } | ForEach-Object {
@@ -50,11 +52,17 @@ export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
       { maxBuffer: 1024 * 1024 * 10 } // 10MB buffer for large task lists
     );
 
-    if (!stdout.trim()) return [];
+    if (!stdout.trim()) {
+      logger.debug('No scheduled tasks returned from PowerShell');
+      return [];
+    }
     const parsed = JSON.parse(stdout);
+    const results = Array.isArray(parsed) ? parsed : [parsed];
+    logger.debug(`Successfully fetched ${results.length} scheduled tasks`);
     // PowerShell returns object (not array) if only 1 task found
-    return Array.isArray(parsed) ? parsed : [parsed];
+    return results;
   } catch (error) {
+    logger.error('Error fetching scheduled tasks from PowerShell', error);
     console.error('Error fetching scheduled tasks:', error);
     return [];
   }

@@ -8,7 +8,12 @@ import {
   RunStatus,
 } from './types';
 import { settings } from './settings';
-import { getTasksWithTriggers, formatTrigger } from './scheduler';
+import {
+  getTasksWithTriggers,
+  formatTrigger,
+  ScheduledTask,
+} from './scheduler';
+import { logger } from './logging';
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
@@ -21,6 +26,7 @@ const REPORT_FILE = settings.reportPath;
 
 function ensureDataDir(): void {
   if (!fs.existsSync(DATA_DIR)) {
+    logger.debug(`Creating data directory: ${DATA_DIR}`);
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
 }
@@ -57,18 +63,27 @@ function nowISO(): string {
 
 export function loadHistory(): ActionHistoryMap {
   ensureDataDir();
-  if (!fs.existsSync(HISTORY_FILE)) return {};
+  if (!fs.existsSync(HISTORY_FILE)) {
+    logger.debug('History file not found, returning empty map');
+    return {};
+  }
   try {
     const raw = fs.readFileSync(HISTORY_FILE, 'utf-8');
     return JSON.parse(raw) as ActionHistoryMap;
-  } catch {
+  } catch (err) {
+    logger.error('Failed to load history file', err);
     return {};
   }
 }
 
 function saveHistory(history: ActionHistoryMap): void {
   ensureDataDir();
-  fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2), 'utf-8');
+  try {
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(history, null, 2), 'utf-8');
+    logger.debug('History file saved');
+  } catch (err) {
+    logger.error('Failed to save history file', err);
+  }
 }
 
 // ─── Report TXT ───────────────────────────────────────────────────────────────
@@ -81,9 +96,16 @@ async function rebuildReport(
   actions: ActionDefinition[],
   history: ActionHistoryMap
 ): Promise<void> {
+  logger.debug('Rebuilding report');
   ensureDataDir();
 
-  const scheduledTasks = await getTasksWithTriggers();
+  let scheduledTasks: ScheduledTask[];
+  try {
+    scheduledTasks = await getTasksWithTriggers();
+  } catch (err) {
+    logger.error('Failed to get scheduled tasks with triggers', err);
+    scheduledTasks = [];
+  }
 
   // 1. Gather row data for sorting
   const rowData = actions.map((action) => {
@@ -94,7 +116,9 @@ async function rebuildReport(
 
     // Get frequency from Task Scheduler if taskName is provided
     if (action.taskName) {
-      const task = scheduledTasks.find((t) => t.TaskName === action.taskName);
+      const task = scheduledTasks.find(
+        (t: ScheduledTask) => t.TaskName === action.taskName
+      );
       if (task && task.Triggers) {
         const triggers = Array.isArray(task.Triggers)
           ? task.Triggers
@@ -203,12 +227,15 @@ async function rebuildReport(
 
   try {
     fs.writeFileSync(REPORT_FILE, lines.join('\n'), 'utf-8');
+    logger.debug(`Report file updated at: ${REPORT_FILE}`);
   } catch (err: any) {
     if (err.code === 'EPERM' || err.code === 'EBUSY') {
+      logger.warn(`Could not update report file at ${REPORT_FILE} (file busy)`);
       console.warn(
         `\n⚠️  Warning: Could not update report file at ${REPORT_FILE}. It might be open in another program. Execution will continue.`
       );
     } else {
+      logger.error(`Error writing report file to ${REPORT_FILE}`, err);
       console.error(`\n❌  Error writing report file: ${err.message}`);
     }
   }
