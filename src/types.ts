@@ -33,6 +33,6 @@ export interface ActionDefinition {
    * Mirrors the `pause` keyword in the original .bat files.
    */
   pauseAfterRun: boolean;
-  /** The actual async function that runs the action */
-  run: () => Promise<void>;
+  /** The actual function that runs the action (can be sync or async) */
+  run: () => void | Promise<void>;
 }

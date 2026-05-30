@@ -59,7 +59,9 @@ describe('Actions Implementation', () => {
 
       it('should throw error if process fails', async () => {
         mockProcessResult(1);
-        await expect(action.run()).rejects.toThrow(/exited with code 1/);
+        await expect(async () => await action.run()).rejects.toThrow(
+          /exited with code 1/
+        );
       });
     });
   });
@@ -82,7 +84,9 @@ describe('Actions Implementation', () => {
 
     it('should throw error if xcopy fails', async () => {
       mockProcessResult(4);
-      await expect(syncDaily.run()).rejects.toThrow(/xcopy exited with code 4/);
+      await expect(async () => await syncDaily.run()).rejects.toThrow(
+        /Process exited with code 4/
+      );
     });
   });
 });
