@@ -1,42 +1,57 @@
-import { spawnSync, SpawnSyncOptions } from 'child_process';
+// src/utils/spawnAction.ts
+import { spawn } from 'child_process';
 import { logger } from '../logging';
 
 export function spawnAction(
   label: string,
   cmd: string,
   args: string[],
-  options: Omit<SpawnSyncOptions, 'stdio' | 'encoding'>
-): void {
+  options: { cwd: string }
+): Promise<void> {
   logger.debug(`Spawning ${label} in ${options.cwd}`);
 
-  const result = spawnSync(cmd, args, {
-    ...options,
-    stdio: 'pipe',
-    encoding: 'utf-8',
-    shell: true,
+  return new Promise((resolve, reject) => {
+    const child = spawn(cmd, args, {
+      ...options,
+      stdio: 'pipe', // capture streams
+      shell: true,
+    });
+
+    let stdoutBuf = '';
+    let stderrBuf = '';
+
+    // Stream in real-time to parent console AND buffer
+    child.stdout?.on('data', (chunk: Buffer) => {
+      const text = chunk.toString();
+      process.stdout.write(text); // real-time console output
+      stdoutBuf += text;
+    });
+
+    child.stderr?.on('data', (chunk: Buffer) => {
+      const text = chunk.toString();
+      process.stderr.write(text); // real-time console output
+      stderrBuf += text;
+    });
+
+    child.on('error', (err) => {
+      logger.error(`Failed to spawn ${label}`, {
+        error: err.message,
+        stderr: stderrBuf.trim(),
+      });
+      reject(err);
+    });
+
+    child.on('close', (code) => {
+      const stdout = stdoutBuf.trim();
+      const stderr = stderrBuf.trim();
+
+      if (code !== 0) {
+        logger.error(`${label} exited with code ${code}`, { stdout, stderr });
+        reject(new Error(`Process exited with code ${code}`));
+      } else {
+        logger.debug(`${label} completed successfully`);
+        resolve();
+      }
+    });
   });
-
-  const stdout = (result.stdout as string)?.trim();
-  const stderr = (result.stderr as string)?.trim();
-
-  if (stdout) logger.debug(`${label} stdout:\n${stdout}`);
-  if (stderr) logger.debug(`${label} stderr:\n${stderr}`);
-
-  if (result.error) {
-    logger.error(`Failed to spawn ${label}`, {
-      error: result.error.message,
-      stderr,
-    });
-    throw result.error;
-  }
-
-  if (result.status !== 0) {
-    logger.error(`${label} exited with code ${result.status}`, {
-      stdout,
-      stderr,
-    });
-    throw new Error(`Process exited with code ${result.status}`);
-  }
-
-  logger.debug(`${label} completed successfully`);
 }
