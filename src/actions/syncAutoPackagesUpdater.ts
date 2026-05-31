@@ -1,5 +1,5 @@
 import { ActionDefinition } from '../types';
-import { spawnAction } from '../utils/spawnAction';
+import { spawnSync } from 'child_process';
 
 const syncAutoPackagesUpdater: ActionDefinition = {
   name: 'syncAutoPackagesUpdater',
@@ -7,10 +7,21 @@ const syncAutoPackagesUpdater: ActionDefinition = {
   taskName: 'syncAutoPackagesUpdater',
   schedulePeriod: 'Daily',
   pauseAfterRun: false,
-  run: () => {
-    spawnAction('syncAutoPackagesUpdater', 'pnpm', ['run', 'sync'], {
+  run: async () => {
+    await Promise.resolve();
+    const result = spawnSync('pnpm', ['run', 'sync'], {
       cwd: 'C:\\Or\\web\\projects\\auto-packages-updater-ts',
+      stdio: 'inherit',
+      shell: true,
     });
+
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      throw new Error(`Process exited with code ${result.status}`);
+    }
   },
 };
 

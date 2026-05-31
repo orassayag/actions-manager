@@ -1,6 +1,5 @@
 import { ActionDefinition } from '../types';
-import { spawnAction } from '../utils/spawnAction';
-import { logger } from '../logging';
+import { spawnSync } from 'child_process';
 
 const syncDaily: ActionDefinition = {
   name: 'syncDaily',
@@ -13,14 +12,21 @@ const syncDaily: ActionDefinition = {
     const dst =
       'c:\\Users\\Or Assayag\\Dropbox\\or-life\\documents\\daily-backup';
 
-    spawnAction('syncDaily', 'xcopy', ['/s', '/y', `"${src}"`, `"${dst}"`], {
-      cwd: process.cwd(),
+    const result = spawnSync('xcopy', ['/s', '/y', `"${src}"`, `"${dst}"`], {
+      stdio: 'inherit',
+      shell: true,
     });
 
-    logger.debug('syncDaily completed, waiting 5 seconds...');
+    if (result.error) {
+      throw result.error;
+    }
+
+    if (result.status !== 0) {
+      throw new Error(`xcopy exited with code ${result.status}`);
+    }
+
     // 5-second pause equivalent (non-blocking)
     await new Promise<void>((resolve) => setTimeout(resolve, 5000));
-    logger.debug('syncDaily wait finished');
   },
 };
 

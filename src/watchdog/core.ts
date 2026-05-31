@@ -9,16 +9,13 @@ import {
 } from './action-runner.js';
 import { appendWatchdogReport } from './report-writer.js';
 import { recordRun } from '../history.js';
-import { Logger } from '../logging/index.js';
-
-const logger = new Logger('WatchdogCore');
 
 /**
  * Executes the core watchdog check logic.
  * This is the logic that normally runs at 08:00.
  */
 export async function runWatchdogCheck(): Promise<void> {
-  logger.info('Watchdog check started');
+  console.log(`[${new Date().toISOString()}] Watchdog check started.`);
 
   const allActions = Object.values(ACTION_MAP);
 
@@ -26,7 +23,10 @@ export async function runWatchdogCheck(): Promise<void> {
   try {
     actions = readTaskSchedulerActions();
   } catch (err) {
-    logger.error('Failed to read ACTIONS_REPORT.txt', err);
+    console.error(
+      `[${new Date().toISOString()}] Failed to read ACTIONS_REPORT.txt:`,
+      (err as Error).message
+    );
     return;
   }
 
@@ -35,7 +35,9 @@ export async function runWatchdogCheck(): Promise<void> {
   for (const action of actions) {
     // Only check actions that are defined as Task Scheduler actions in the registry
     if (!isSchedulerAction(action.name)) {
-      logger.debug(`Skipping manual-only action: "${action.name}"`);
+      console.log(
+        `[${new Date().toISOString()}] Skipping manual-only action: "${action.name}"`
+      );
       continue;
     }
 
@@ -48,22 +50,24 @@ export async function runWatchdogCheck(): Promise<void> {
     // 3. Check if the verified date is also missed
     const isMissedInVerifiedReport = wasMissed(action.frequency, verified.date);
 
-    logger.debug(`Checking "${action.name}"`, {
-      actionsReportStatus: isMissedInActionsReport ? 'MISSED' : 'OK',
-      dedicatedReportStatus:
-        verified.source === 'dedicated-report'
-          ? isMissedInVerifiedReport
-            ? 'MISSED'
-            : 'OK'
-          : 'N/A',
-    });
+    console.log(`[${new Date().toISOString()}] Checking "${action.name}"`);
+    console.log(
+      `  - ACTIONS_REPORT.txt status: ${isMissedInActionsReport ? 'MISSED' : 'OK'}`
+    );
+    if (verified.source === 'dedicated-report') {
+      console.log(
+        `  - Dedicated report status: ${isMissedInVerifiedReport ? 'MISSED' : 'OK'}`
+      );
+    }
 
     // Recovery Logic:
     // If the dedicated report is MISSED, we MUST attempt recovery.
     // If ACTIONS_REPORT is MISSED but Dedicated is OK, it's a sync failure (we don't re-run, just report it).
 
     if (isMissedInVerifiedReport) {
-      logger.warn(`MISSED (verified): ${action.name} — attempting recovery...`);
+      console.log(
+        `[${new Date().toISOString()}] MISSED (verified): ${action.name} — attempting recovery...`
+      );
 
       const actionDef = ACTION_MAP[action.name];
       const result = await runAction(action.name);
@@ -76,28 +80,33 @@ export async function runWatchdogCheck(): Promise<void> {
       }
 
       results.push(result);
-      if (result.success) {
-        logger.info(`Recovery successful for ${action.name}`);
-      } else {
-        logger.error(`Recovery failed for ${action.name}`, result.error);
-      }
+      console.log(
+        `[${new Date().toISOString()}] ${result.success ? '✅' : '❌'} ${action.name} ${
+          result.error ? `- Error: ${result.error}` : ''
+        }`
+      );
     } else if (isMissedInActionsReport) {
-      logger.warn(`SYNC FAILURE: ${action.name} (Dedicated report is OK)`);
+      console.log(
+        `[${new Date().toISOString()}] SYNC FAILURE: ${action.name} (Dedicated report is OK)`
+      );
       results.push({
         name: action.name,
         success: false,
         error: 'Missed in ACTIONS_REPORT.txt (but OK in dedicated)',
       });
     } else {
-      logger.debug(`OK: ${action.name}`);
+      console.log(`[${new Date().toISOString()}] OK: ${action.name}`);
       results.push({ name: action.name, success: true });
     }
   }
 
   try {
     appendWatchdogReport(results);
-    logger.info('Watchdog report updated');
+    console.log(`[${new Date().toISOString()}] Report updated.`);
   } catch (err) {
-    logger.error('Failed to write watchdog report', err);
+    console.error(
+      `[${new Date().toISOString()}] Failed to write report:`,
+      (err as Error).message
+    );
   }
 }

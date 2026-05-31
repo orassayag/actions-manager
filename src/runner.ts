@@ -1,7 +1,6 @@
 import { ActionDefinition, RunType } from './types';
 import { recordRun } from './history';
 import * as readline from 'readline';
-import { logger } from './logging';
 
 /**
  * Runs an action, records its history, and optionally pauses (keeps window open).
@@ -11,10 +10,6 @@ export async function runAction(
   runType: RunType,
   allActions: ActionDefinition[]
 ): Promise<void> {
-  logger.info(`Running action: ${action.name}`, {
-    label: action.label,
-    runType,
-  });
   console.log(`\n▶  Running: ${action.label}  [${runType}]`);
   console.log('─'.repeat(50));
 
@@ -23,12 +18,10 @@ export async function runAction(
 
   try {
     await action.run();
-    logger.info(`Finished action: ${action.name}`);
     console.log(`\n✅  Finished: ${action.label}`);
     // Record SUCCESSFUL end of run
     await recordRun(action, runType, allActions, 'Finished');
   } catch (err: any) {
-    logger.error(`Error in action: ${action.name}`, err);
     // Record ERROR end of run
     await recordRun(action, runType, allActions, 'Error');
     if (err instanceof Error && err.message.includes('exited with code')) {
