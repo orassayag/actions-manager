@@ -199,10 +199,30 @@ async function rebuildReport(
   });
 
   const updatedAt = `Last Updated: ${getJerusalemTimestamp()}`;
-  const lines = [updatedAt, '', header, separator, ...rows, ''];
+
+  // 4. Generate #FOR-BOT# section
+  const botRows = [...rowData]
+    .filter((d) => d.lastRunTimestamp > 0)
+    .sort((a, b) => b.lastRunTimestamp - a.lastRunTimestamp)
+    .map((d) => `${d.label} - ${d.lastRunDisplay}`);
+
+  const botSection = ['', '#FOR-BOT#', ...botRows];
+
+  const lines = [updatedAt, '', header, separator, ...rows, ...botSection, ''];
 
   try {
-    fs.writeFileSync(REPORT_FILE, lines.join('\n'), 'utf-8');
+    // Preserve Watchdog block if it exists
+    let existingContent = '';
+    if (fs.existsSync(REPORT_FILE)) {
+      existingContent = fs.readFileSync(REPORT_FILE, 'utf-8');
+    }
+
+    const watchdogMarker = '\nNode-Windows Watchdog:';
+    const watchdogIndex = existingContent.indexOf(watchdogMarker);
+    const watchdogBlock =
+      watchdogIndex !== -1 ? existingContent.slice(watchdogIndex) : '';
+
+    fs.writeFileSync(REPORT_FILE, lines.join('\n') + watchdogBlock, 'utf-8');
   } catch (err: any) {
     if (err.code === 'EPERM' || err.code === 'EBUSY') {
       console.warn(
