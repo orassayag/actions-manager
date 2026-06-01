@@ -130,6 +130,53 @@ export function formatTrigger(trigger: TaskTrigger): string {
   return 'Never';
 }
 
+/**
+ * Formats multiple triggers into a single string.
+ * Example: "Daily 22:00|19:00" or "Weekly 02:00 Sat | Daily 10:00"
+ */
+export function formatTriggers(triggers: TaskTrigger[]): string {
+  const activeTriggers = triggers.filter((t) => t.Enabled);
+  if (activeTriggers.length === 0) return 'Never';
+
+  // Group by base type (Daily, Weekly, etc.)
+  const groups = new Map<string, string[]>();
+
+  for (const trigger of activeTriggers) {
+    const formatted = formatTrigger(trigger);
+    if (formatted === 'Never') continue;
+
+    const firstSpace = formatted.indexOf(' ');
+    if (firstSpace === -1) {
+      if (!groups.has(formatted)) groups.set(formatted, []);
+      continue;
+    }
+
+    const base = formatted.substring(0, firstSpace);
+    const detail = formatted.substring(firstSpace + 1);
+
+    if (!groups.has(base)) groups.set(base, []);
+    const details = groups.get(base)!;
+    if (!details.includes(detail)) {
+      details.push(detail);
+    }
+  }
+
+  if (groups.size === 0) return 'Never';
+
+  const results: string[] = [];
+  for (const [base, details] of groups.entries()) {
+    if (details.length === 0) {
+      results.push(base);
+    } else {
+      // Sort details (times) descending to match user's example "22:00|19:00"
+      details.sort((a, b) => b.localeCompare(a));
+      results.push(`${base} ${details.join('|')}`);
+    }
+  }
+
+  return results.join(' | ');
+}
+
 export async function getTaskFrequency(taskName: string): Promise<string> {
   const tasks = await getTasksWithTriggers();
   const task = tasks.find((t) => t.TaskName === taskName);
@@ -140,8 +187,5 @@ export async function getTaskFrequency(taskName: string): Promise<string> {
     ? task.Triggers
     : [task.Triggers];
 
-  const activeTrigger = triggers.find((t) => t.Enabled);
-  if (!activeTrigger) return 'Never';
-
-  return formatTrigger(activeTrigger);
+  return formatTriggers(triggers);
 }

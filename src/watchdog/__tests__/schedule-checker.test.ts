@@ -31,6 +31,30 @@ describe('schedule-checker', () => {
       // getLastExpectedRunTime should return yesterday's 22:00 slot because 08:00 < 22:00
       expect(wasMissed('Daily 22:00', lastRun)).toBe(false);
     });
+
+    it('should handle multiple daily times', () => {
+      // Mock "now" to 2026-05-24 20:00:00
+      vi.setSystemTime(new Date('2026-05-24T20:00:00'));
+
+      // Scheduled: 22:00, 19:00.
+      // Current time: 20:00.
+      // Most recent slot: 19:00 today.
+
+      // Ran at 19:05 -> false
+      expect(
+        wasMissed('Daily 22:00|19:00', new Date('2026-05-24T19:05:00'))
+      ).toBe(false);
+
+      // Ran at 18:55 -> true (missed the 19:00 slot)
+      expect(
+        wasMissed('Daily 22:00|19:00', new Date('2026-05-24T18:55:00'))
+      ).toBe(true);
+
+      // Ran yesterday at 22:05 -> true (missed the 19:00 slot today)
+      expect(
+        wasMissed('Daily 22:00|19:00', new Date('2026-05-23T22:05:00'))
+      ).toBe(true);
+    });
   });
 
   describe('Weekly tasks', () => {

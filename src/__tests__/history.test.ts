@@ -12,6 +12,7 @@ vi.mock('fs');
 vi.mock('../scheduler', () => ({
   getTasksWithTriggers: vi.fn().mockResolvedValue([]),
   formatTrigger: vi.fn().mockReturnValue('Mock Frequency'),
+  formatTriggers: vi.fn().mockReturnValue('Mock Frequency'),
 }));
 
 describe('History', () => {

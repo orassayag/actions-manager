@@ -8,7 +8,7 @@ import {
   RunStatus,
 } from './types';
 import { settings } from './settings';
-import { getTasksWithTriggers, formatTrigger } from './scheduler';
+import { getTasksWithTriggers, formatTriggers } from './scheduler';
 
 // ─── Paths ────────────────────────────────────────────────────────────────────
 
@@ -99,10 +99,7 @@ async function rebuildReport(
         const triggers = Array.isArray(task.Triggers)
           ? task.Triggers
           : [task.Triggers];
-        const activeTrigger = triggers.find((t) => t.Enabled);
-        if (activeTrigger) {
-          frequency = formatTrigger(activeTrigger);
-        }
+        frequency = formatTriggers(triggers);
       }
     } else if (action.schedulePeriod) {
       // Fallback to schedulePeriod if taskName is not found or not provided
@@ -168,7 +165,7 @@ async function rebuildReport(
   // 3. Format rows
   const COL1 = 24; // Action label
   const COL2 = 14; // Last Run Type
-  const COL3 = 16; // Frequency
+  const COL3 = 17; // Frequency
 
   const header =
     pad('Action', COL1) +

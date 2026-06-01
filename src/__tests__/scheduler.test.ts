@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import {
   formatTrigger,
+  formatTriggers,
   getTaskFrequency,
   getTasksWithTriggers,
 } from '../scheduler';
@@ -162,6 +163,52 @@ describe('Scheduler', () => {
         Enabled: true,
       };
       expect(formatTrigger(trigger)).toBe('Once 22:00');
+    });
+  });
+
+  describe('formatTriggers', () => {
+    it('should merge multiple daily triggers', () => {
+      const triggers = [
+        {
+          TriggerType: 'MSFT_TaskDailyTrigger',
+          StartBoundary: '2024-01-01T22:00:00',
+          Enabled: true,
+        },
+        {
+          TriggerType: 'MSFT_TaskDailyTrigger',
+          StartBoundary: '2024-01-01T19:00:00',
+          Enabled: true,
+        },
+      ];
+      expect(formatTriggers(triggers)).toBe('Daily 22:00|19:00');
+    });
+
+    it('should handle multiple types of triggers', () => {
+      const triggers = [
+        {
+          TriggerType: 'MSFT_TaskDailyTrigger',
+          StartBoundary: '2024-01-01T22:00:00',
+          Enabled: true,
+        },
+        {
+          TriggerType: 'MSFT_TaskWeeklyTrigger',
+          StartBoundary: '2024-01-01T02:00:00',
+          DaysOfWeek: 'Saturday',
+          Enabled: true,
+        },
+      ];
+      expect(formatTriggers(triggers)).toBe('Daily 22:00 | Weekly 02:00 Sat');
+    });
+
+    it('should return "Never" if no triggers are enabled', () => {
+      const triggers = [
+        {
+          TriggerType: 'MSFT_TaskDailyTrigger',
+          StartBoundary: '2024-01-01T22:00:00',
+          Enabled: false,
+        },
+      ];
+      expect(formatTriggers(triggers)).toBe('Never');
     });
   });
 
