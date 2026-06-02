@@ -3,6 +3,8 @@
     "Assayag",
     "backuped",
     "logmode",
+    "maxtimeout",
+    "mintimeout",
     "msvc",
     "orassayag",
     "prio",
