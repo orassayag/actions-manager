@@ -30,10 +30,11 @@ export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
         TaskName = $task.TaskName
         Triggers = $task.Triggers | ForEach-Object {
           [PSCustomObject]@{
-            TriggerType   = $_.CimClass.CimClassName
-            StartBoundary = $_.StartBoundary
-            DaysOfWeek    = $_.DaysOfWeek
-            Enabled       = $_.Enabled
+            TriggerType        = $_.CimClass.CimClassName
+            StartBoundary      = $_.StartBoundary
+            DaysOfWeek         = $_.DaysOfWeek
+            RepetitionInterval = $_.Repetition.Interval
+            Enabled            = $_.Enabled
           }
         }
       }
@@ -62,6 +63,22 @@ export async function getTasksWithTriggers(): Promise<ScheduledTask[]> {
 
 export function formatTrigger(trigger: TaskTrigger): string {
   const type = trigger.TriggerType ?? '';
+
+  // 1. Check for repetition first (e.g. "Hourly x6")
+  if (trigger.RepetitionInterval) {
+    // RepetitionInterval is usually ISO8601 duration, e.g. "PT6H" or "PT15M"
+    const match = trigger.RepetitionInterval.match(/PT(\d+)([HM])/);
+    if (match) {
+      const value = match[1];
+      const unit = match[2];
+      if (unit === 'H') {
+        return `Hourly x${value}`;
+      } else if (unit === 'M') {
+        // e.g. PT20M -> Minutely x20
+        return `Minutely x${value}`;
+      }
+    }
+  }
 
   // Extract time from ISO string, e.g. "2024-01-01T22:00:00" => "22:00"
   let time = '';

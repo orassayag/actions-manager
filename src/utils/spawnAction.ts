@@ -1,6 +1,5 @@
 // src/utils/spawnAction.ts
 import { spawn } from 'child_process';
-import { logger } from '../logging';
 
 export function spawnAction(
   label: string,
@@ -8,7 +7,7 @@ export function spawnAction(
   args: string[],
   options: { cwd: string }
 ): Promise<void> {
-  logger.debug(`Spawning ${label} in ${options.cwd}`);
+  console.log(`Spawning ${label} in ${options.cwd}`);
 
   return new Promise((resolve, reject) => {
     const child = spawn(cmd, args, {
@@ -34,7 +33,7 @@ export function spawnAction(
     });
 
     child.on('error', (err) => {
-      logger.error(`Failed to spawn ${label}`, {
+      console.error(`Failed to spawn ${label}`, {
         error: err.message,
         stderr: stderrBuf.trim(),
       });
@@ -46,10 +45,10 @@ export function spawnAction(
       const stderr = stderrBuf.trim();
 
       if (code !== 0) {
-        logger.error(`${label} exited with code ${code}`, { stdout, stderr });
+        console.error(`${label} exited with code ${code}`, { stdout, stderr });
         reject(new Error(`Process exited with code ${code}`));
       } else {
-        logger.debug(`${label} completed successfully`);
+        console.log(`${label} completed successfully`);
         resolve();
       }
     });
