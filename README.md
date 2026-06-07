@@ -14,12 +14,10 @@ Built in May 2026. This application focuses on reliability, maintainability, and
 - **Automatic History Logging**: Every run is recorded to `data/history.json` and `ACTIONS_REPORT.txt`.
 - **Real-Time Status Reporting**: Generates monitoring reports for at-a-glance task status.
 - **Execution Tracking**: Automatically records last execution time and run type for every action.
-- **Node-Windows Watchdog**: A background service that runs at 08:00 to verify Task Scheduler success and recover missed tasks.
 
 ### Technical Excellence
 
 - **Modern ESM Architecture**: Built using ES Modules and TypeScript for a future-proof codebase.
-- **Reliable Verification**: Watchdog cross-references multiple report files for maximum reliability.
 - **Robust Error Handling**: Suppresses noisy stack traces for expected failures while preserving them for crashes.
 - **Type Safety**: Full TypeScript implementation with strict type checking.
 - **Comprehensive Testing**: Full Vitest setup with high coverage requirements (80%+).
@@ -188,26 +186,6 @@ pnpm format:check  # Check without modifying
 
 ```bash
 pnpm build
-```
-
-### Watchdog Service
-
-**Install the service (Run as Admin):**
-
-```bash
-pnpm watchdog:install
-```
-
-**Uninstall the service (Run as Admin):**
-
-```bash
-pnpm watchdog:uninstall
-```
-
-**Run watchdog in development mode:**
-
-```bash
-pnpm watchdog:dev
 ```
 
 ## Development

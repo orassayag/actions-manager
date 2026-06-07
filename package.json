@@ -44,11 +44,7 @@
     "test:watch": "cross-env NODE_OPTIONS='--no-warnings' vitest",
     "test:no-coverage": "cross-env NODE_OPTIONS='--no-warnings' vitest run",
     "test:ui": "vitest --ui",
-    "build": "tsc",
-    "watchdog:install": "ts-node src/watchdog/services/install-watchdog-service.ts",
-    "watchdog:uninstall": "ts-node src/watchdog/services/uninstall-watchdog-service.ts",
-    "watchdog:dev": "tsx src/watchdog/watchdog.ts",
-    "watchdog:run": "tsx src/watchdog/manual-trigger.ts"
+    "build": "tsc"
   },
   "author": {
     "name": "Or Assayag",
@@ -102,8 +98,7 @@
   },
   "dependencies": {
     "enquirer": "^2.4.1",
-    "node-cron": "^4.2.1",
-    "node-windows": "1.0.0-beta.8"
+    "node-cron": "^4.2.1"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

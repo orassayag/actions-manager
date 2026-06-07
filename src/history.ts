@@ -208,18 +208,7 @@ async function rebuildReport(
   const lines = [updatedAt, '', header, separator, ...rows, ...botSection, ''];
 
   try {
-    // Preserve Watchdog block if it exists
-    let existingContent = '';
-    if (fs.existsSync(REPORT_FILE)) {
-      existingContent = fs.readFileSync(REPORT_FILE, 'utf-8');
-    }
-
-    const watchdogMarker = '\nNode-Windows Watchdog:';
-    const watchdogIndex = existingContent.indexOf(watchdogMarker);
-    const watchdogBlock =
-      watchdogIndex !== -1 ? existingContent.slice(watchdogIndex) : '';
-
-    fs.writeFileSync(REPORT_FILE, lines.join('\n') + watchdogBlock, 'utf-8');
+    fs.writeFileSync(REPORT_FILE, lines.join('\n'), 'utf-8');
   } catch (err: any) {
     if (err.code === 'EPERM' || err.code === 'EBUSY') {
       console.warn(

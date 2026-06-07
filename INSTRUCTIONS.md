@@ -101,26 +101,6 @@ pnpm test:watch
 pnpm test:ui
 ```
 
-### Watchdog Service Commands
-
-**Install the Watchdog (Admin Terminal):**
-
-```bash
-pnpm watchdog:install
-```
-
-**Uninstall the Watchdog (Admin Terminal):**
-
-```bash
-pnpm watchdog:uninstall
-```
-
-**Run in development/test mode:**
-
-```bash
-pnpm watchdog:dev
-```
-
 ### Running Scripts
 
 **Interactive Mode (Manual):**
