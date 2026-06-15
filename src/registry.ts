@@ -1,16 +1,18 @@
 import { ActionDefinition } from './types';
 
 // ─── Import all actions ───────────────────────────────────────────────────────
-import dailyEventsBot from './actions/dailyEventsBot';
-import syncDaily from './actions/syncDaily';
-import syncAutoPackagesUpdater from './actions/syncAutoPackagesUpdater';
-import seriesAndMovies from './actions/seriesAndMovies';
-import reposScanReporter from './actions/reposScanReporter';
-import contactsScanMaintainer from './actions/contactsScanMaintainer';
-import globalPackageUpdater from './actions/globalPackageUpdater';
-import backupsManager from './actions/backupsManager';
-import nodeWatchdog from './actions/nodeWatchdog';
-import logsCleaner from './actions/logsCleaner';
+import {
+  dailyEventsBot,
+  syncDaily,
+  syncAutoPackagesUpdater,
+  seriesAndMovies,
+  reposScanReporter,
+  contactsScanMaintainer,
+  globalPackageUpdater,
+  backupsManager,
+  nodeWatchdog,
+  logsCleaner,
+} from './actions/index';
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 // Order here controls the dropdown order when running manually.

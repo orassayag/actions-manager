@@ -1,4 +1,4 @@
-import { ActionDefinition } from '../types';
+import { ActionDefinition } from '../index';
 import { spawnSync } from 'child_process';
 
 const reposScanReporter: ActionDefinition = {

@@ -1,7 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { runAction } from '../runner';
-import { ActionDefinition } from '../types';
-import * as history from '../history';
+import { runAction, ActionDefinition, recordRun } from '../index';
 import * as readline from 'readline';
 
 // Mock history module
@@ -36,13 +34,13 @@ describe('Runner', () => {
 
     expect(mockAction.run).toHaveBeenCalled();
     // Check both start and end calls
-    expect(history.recordRun).toHaveBeenCalledWith(
+    expect(recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,
       'Running'
     );
-    expect(history.recordRun).toHaveBeenCalledWith(
+    expect(recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,
@@ -56,13 +54,13 @@ describe('Runner', () => {
 
     await runAction(mockAction, 'Manual', allActions);
 
-    expect(history.recordRun).toHaveBeenCalledWith(
+    expect(recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,
       'Running'
     );
-    expect(history.recordRun).toHaveBeenCalledWith(
+    expect(recordRun).toHaveBeenCalledWith(
       mockAction,
       'Manual',
       allActions,

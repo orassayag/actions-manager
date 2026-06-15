@@ -1,8 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { main } from '../index';
-import * as runner from '../runner';
-import * as prompt from '../prompt';
-import actions from '../registry';
+import { main, actions } from '../index';
+import * as runner from '../index';
+import * as prompt from '../index';
 
 vi.mock('../runner', () => ({
   runAction: vi.fn().mockResolvedValue(undefined),
@@ -20,18 +19,20 @@ describe('Index Entry Point', () => {
   });
 
   it('should print usage and return on --help', async () => {
-    await main(['--help']);
+    const exitCode = await main(['--help']);
     expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Usage:'));
+    expect(exitCode).toBe(0);
   });
 
   it('should run scheduled action when argument is provided', async () => {
     const actionName = actions[0].name;
-    await main([actionName]);
+    const exitCode = await main([actionName]);
     expect(runner.runAction).toHaveBeenCalledWith(
       actions[0],
       'Task Scheduler',
       actions
     );
+    expect(exitCode).toBe(0);
   });
 
   it('should run interactive mode when no argument is provided', async () => {
@@ -41,7 +42,7 @@ describe('Index Entry Point', () => {
       value: actionName,
     });
 
-    await main([]);
+    const exitCode = await main([]);
 
     expect(prompt.selectWithEscape).toHaveBeenCalled();
     expect(runner.runAction).toHaveBeenCalledWith(
@@ -49,33 +50,25 @@ describe('Index Entry Point', () => {
       'Manual',
       actions
     );
+    expect(exitCode).toBe(0);
   });
 
   it('should exit gracefully when interactive mode is escaped', async () => {
     vi.spyOn(prompt, 'selectWithEscape').mockResolvedValue({ escaped: true });
-    const processSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit');
-    });
 
-    await expect(main([])).rejects.toThrow('exit');
+    const exitCode = await main([]);
 
-    expect(processSpy).toHaveBeenCalledWith(0);
-    processSpy.mockRestore();
+    expect(console.log).toHaveBeenCalledWith(expect.stringContaining('Bye!'));
+    expect(exitCode).toBe(0);
   });
 
   it('should exit with error on unknown scheduled action', async () => {
-    const processSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit 1');
-    });
-
-    await expect(main(['unknownAction'])).rejects.toThrow('exit 1');
+    const exitCode = await main(['unknownAction']);
 
     expect(console.error).toHaveBeenCalledWith(
       expect.stringContaining('Unknown action: "unknownAction"')
     );
-    expect(processSpy).toHaveBeenCalledWith(1);
-
-    processSpy.mockRestore();
+    expect(exitCode).toBe(1);
   });
 
   it('should handle "should never happen" action not found in interactive mode', async () => {
@@ -83,17 +76,12 @@ describe('Index Entry Point', () => {
       escaped: false,
       value: 'nonExistentAction',
     });
-    const processSpy = vi.spyOn(process, 'exit').mockImplementation(() => {
-      throw new Error('exit 1');
-    });
 
-    await expect(main([])).rejects.toThrow('exit 1');
+    const exitCode = await main([]);
 
     expect(console.error).toHaveBeenCalledWith(
       expect.stringContaining('Action not found')
     );
-    expect(processSpy).toHaveBeenCalledWith(1);
-
-    processSpy.mockRestore();
+    expect(exitCode).toBe(1);
   });
 });

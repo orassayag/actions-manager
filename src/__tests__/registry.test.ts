@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import actions from '../registry';
+import { actions } from '../index';
 
 describe('Actions Registry', () => {
   it('should have a list of actions', () => {

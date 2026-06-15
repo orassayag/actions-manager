@@ -1,4 +1,4 @@
-import { ActionDefinition } from '../types';
+import { ActionDefinition } from '../index';
 import { execSync } from 'child_process';
 import { appendFileSync, mkdirSync } from 'fs';
 import { join } from 'path';

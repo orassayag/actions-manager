@@ -17,7 +17,8 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "types": ["node", "vitest"]
   },
   "include": ["src/**/*", "*.ts"],
   "exclude": ["node_modules", "dist"]

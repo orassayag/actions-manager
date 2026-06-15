@@ -5,8 +5,8 @@ import {
   loadHistory,
   recordRun,
   refreshReport,
-} from '../history';
-import { ActionDefinition } from '../types';
+  ActionDefinition,
+} from '../index';
 
 vi.mock('fs');
 vi.mock('../scheduler', () => ({

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { selectWithEscape } from '../prompt';
+import { selectWithEscape } from '../index';
 
 // Create mock functions that can be manipulated
 const mockRun = vi.fn().mockResolvedValue('Choice 1');

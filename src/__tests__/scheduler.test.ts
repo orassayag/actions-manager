@@ -4,7 +4,7 @@ import {
   formatTriggers,
   getTaskFrequency,
   getTasksWithTriggers,
-} from '../scheduler';
+} from '../index';
 
 vi.mock('child_process', () => ({
   exec: vi.fn(),

@@ -1,4 +1,4 @@
-import { ActionDefinition } from '../types';
+import { ActionDefinition } from '../index';
 import { spawnSync } from 'child_process';
 
 const syncDaily: ActionDefinition = {
@@ -22,7 +22,7 @@ const syncDaily: ActionDefinition = {
     }
 
     if (result.status !== 0) {
-      throw new Error(`xcopy exited with code ${result.status}`);
+      throw new Error(`Process exited with code ${result.status}`);
     }
 
     // 5-second pause equivalent (non-blocking)

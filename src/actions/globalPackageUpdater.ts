@@ -1,4 +1,4 @@
-import { ActionDefinition } from '../types';
+import { ActionDefinition } from '../index';
 import { spawn } from 'child_process';
 
 const globalPackageUpdater: ActionDefinition = {

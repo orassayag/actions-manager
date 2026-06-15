@@ -1,5 +1,5 @@
 import { spawnSync } from 'node:child_process';
-import type { ActionDefinition } from '../types.js';
+import { ActionDefinition } from '../index';
 
 const logsCleaner: ActionDefinition = {
   name: 'logsCleaner',

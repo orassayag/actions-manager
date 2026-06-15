@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { settings } from '../settings';
+import { settings } from '../index';
 
 describe('Settings', () => {
   it('should have a valid report path', () => {

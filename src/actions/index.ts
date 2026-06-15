@@ -1,0 +1,10 @@
+export { default as backupsManager } from './backupsManager';
+export { default as contactsScanMaintainer } from './contactsScanMaintainer';
+export { default as dailyEventsBot } from './dailyEventsBot';
+export { default as globalPackageUpdater } from './globalPackageUpdater';
+export { default as logsCleaner } from './logsCleaner';
+export { default as nodeWatchdog } from './nodeWatchdog';
+export { default as reposScanReporter } from './reposScanReporter';
+export { default as seriesAndMovies } from './seriesAndMovies';
+export { default as syncAutoPackagesUpdater } from './syncAutoPackagesUpdater';
+export { default as syncDaily } from './syncDaily';

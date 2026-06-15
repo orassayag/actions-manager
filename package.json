@@ -1,13 +1,8 @@
 {
   "name": "actions-manager",
   "version": "1.0.0",
-  "description": "Centralized TypeScript Node.js actions manager that replaces scattered BAT scripts and simplifies Windows Task Scheduler automation. Runs actions by name, tracks last execution time, supports manual selection via CLI, preserves interactive flows, and generates a report for monitoring tasks.",
-  "type": "module",
   "private": false,
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/orassayag/actions-manager.git"
-  },
+  "description": "Centralized TypeScript Node.js actions manager that replaces scattered BAT scripts and simplifies Windows Task Scheduler automation. Runs actions by name, tracks last execution time, supports manual selection via CLI, preserves interactive flows, and generates a report for monitoring tasks.",
   "keywords": [
     "actions-manager",
     "task-automation",
@@ -30,22 +25,19 @@
     "productivity-tools",
     "system-utilities"
   ],
-  "main": "dist/index.js",
-  "scripts": {
-    "lint": "eslint \"src/**/*.ts\"",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "format:check": "prettier --check \"src/**/*.ts\"",
-    "start": "tsx src/index.ts",
-    "start:live": "tsx src/index.ts",
-    "start:no-cache": "tsx src/index.ts --no-cache",
-    "sync": "tsx src/index.ts --auto",
-    "dev": "tsx watch src/index.ts",
-    "test": "cross-env NODE_OPTIONS='--no-warnings' vitest run --coverage",
-    "test:watch": "cross-env NODE_OPTIONS='--no-warnings' vitest",
-    "test:no-coverage": "cross-env NODE_OPTIONS='--no-warnings' vitest run",
-    "test:ui": "vitest --ui",
-    "build": "tsc"
+  "homepage": "https://github.com/orassayag/actions-manager#readme",
+  "bugs": {
+    "url": "https://github.com/orassayag/actions-manager/issues"
   },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/orassayag/actions-manager.git"
+  },
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/orassayag"
+  },
+  "license": "MIT",
   "author": {
     "name": "Or Assayag",
     "email": "orassayag@gmail.com",
@@ -58,15 +50,19 @@
       "url": "https://github.com/orassayag"
     }
   ],
+  "type": "module",
+  "main": "dist/index.js",
   "files": [
     ".github",
     ".vscode",
-    "coverage",
     "data",
     "dist",
+    "docs",
+    "logs",
     "misc",
     "src",
     ".gitignore",
+    ".npmrc",
     ".prettierrc",
     "actionsManager.bat",
     "CHANGELOG.md",
@@ -77,24 +73,24 @@
     "LICENSE",
     "package.json",
     "pnpm-lock.yaml",
+    "pnpm-workspace.yaml",
+    "query",
     "README.md",
     "SECURITY.md",
     "tsconfig.json",
     "tsconfig.node.json",
     "vitest.config.ts"
   ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/orassayag/actions-manager/issues"
-  },
-  "funding": {
-    "type": "github",
-    "url": "https://github.com/sponsors/orassayag"
-  },
-  "homepage": "https://github.com/orassayag/actions-manager#readme",
-  "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=8.0.0"
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx watch src/index.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\"",
+    "start": "tsx src/index.ts",
+    "test": "cross-env NODE_OPTIONS='--no-warnings' vitest run --coverage",
+    "test:no-coverage": "cross-env NODE_OPTIONS='--no-warnings' vitest run",
+    "test:watch": "cross-env NODE_OPTIONS='--no-warnings' vitest"
   },
   "dependencies": {
     "enquirer": "^2.4.1",
@@ -107,8 +103,8 @@
     "@types/node-cron": "^3.0.11",
     "@typescript-eslint/eslint-plugin": "^8.61.0",
     "@typescript-eslint/parser": "^8.61.0",
-    "@vitest/coverage-istanbul": "^4.1.8",
-    "@vitest/ui": "^4.1.8",
+    "@vitest/coverage-istanbul": "^4.1.9",
+    "@vitest/ui": "^4.1.9",
     "cross-env": "^10.1.0",
     "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.8",
@@ -118,6 +114,10 @@
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
-    "vitest": "^4.1.8"
+    "vitest": "^4.1.9"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
   }
 }

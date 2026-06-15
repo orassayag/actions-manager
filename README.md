@@ -1,10 +1,24 @@
 # Actions Manager
 
-A centralized TypeScript Node.js actions manager designed to replace scattered `.bat` scripts and simplify Windows Task Scheduler automation. It provides a single entry point for running various automation tasks, tracking their execution history, and generating comprehensive status reports.
+Actions Manager is a centralized TypeScript and Node.js automation platform designed to replace scattered .bat scripts and streamline Windows Task Scheduler. It provides a single entry point for running, organizing, and monitoring automation tasks through an interactive CLI or scheduled execution. Include execution history tracking, automatic report generation, strict TypeScript typing, robust error handling, ESM architecture, and testing with Vitest.
 
-Built in May 2026. This application focuses on reliability, maintainability, and providing a great developer experience for local automation workflows.
+Built in May 2026, the project focuses on maintainability, reliability, and improving developer productivity for local automation workflows.
 
 ## Features
+
+- 🎛️ Centralized action management with a single entry point (`actionsManager.bat`)
+- 🖥️ Interactive CLI menu powered by `enquirer` for manual action selection
+- 📅 Windows Task Scheduler integration for automated execution
+- 📜 Automatic history logging to `data/history.json` and `ACTIONS_REPORT.txt`
+- 📊 Real-time status reports for at-a-glance task monitoring
+- ⏱️ Execution tracking with last run time and run type recording
+- 🏗️ Modern ESM architecture with TypeScript for future-proof code
+- 🛡️ Robust error handling (suppresses noisy stack traces for expected failures)
+- 🔒 Full TypeScript with strict type checking
+- 🧪 Comprehensive testing with Vitest (80%+ coverage requirement)
+- ⌨️ ESC navigation support for graceful menu exits
+- 🔇 Quiet mode to suppress Node.js deprecation warnings
+- ⚡ Fast execution via `tsx`
 
 ### Core Capabilities
 
@@ -206,22 +220,6 @@ Prettier is used for code formatting. Always format your code before submitting 
 pnpm format
 ```
 
-### Testing
-
-**Unit Testing:**
-We use Vitest for unit and integration testing. All new logic should include corresponding tests.
-
-```bash
-pnpm test
-```
-
-**Coverage:**
-The project has high coverage requirements (80%+). Ensure your tests maintain this threshold.
-
-```bash
-pnpm test:coverage
-```
-
 ### Building
 
 **Compilation:**
@@ -303,14 +301,7 @@ This application has an MIT license - see the [LICENSE](LICENSE) file for detail
 
 ## Acknowledgments
 
-Built with:
-
-- [Node.js](https://nodejs.org/) - JavaScript runtime
-- [TypeScript](https://www.typescriptlang.org/) - Type safety
-- [Enquirer](https://www.npmjs.com/package/enquirer) - Interactive prompts
-- [Vitest](https://vitest.dev/) - Testing framework
-- [tsx](https://tsx.is/) - TypeScript execution
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- Built for educational and research purposes
+- Respects robots.txt and implements rate limiting
+- Uses user-agent rotation to avoid detection
+- Implements polite crawling practices
