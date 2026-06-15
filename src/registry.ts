@@ -10,6 +10,7 @@ import contactsScanMaintainer from './actions/contactsScanMaintainer';
 import globalPackageUpdater from './actions/globalPackageUpdater';
 import backupsManager from './actions/backupsManager';
 import nodeWatchdog from './actions/nodeWatchdog';
+import logsCleaner from './actions/logsCleaner';
 
 // ─── Registry ─────────────────────────────────────────────────────────────────
 // Order here controls the dropdown order when running manually.
@@ -31,6 +32,7 @@ const actions: ActionDefinition[] = [
   globalPackageUpdater,
   backupsManager,
   nodeWatchdog,
+  logsCleaner,
 ];
 
 export default actions;
