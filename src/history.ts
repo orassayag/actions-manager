@@ -199,7 +199,6 @@ async function rebuildReport(
 
   // 4. Generate #FOR-BOT# section
   const botRows = [...rowData]
-    .filter((d) => d.lastRunTimestamp > 0)
     .sort((a, b) => b.lastRunTimestamp - a.lastRunTimestamp)
     .map((d) => `${d.label} - ${d.lastRunDisplay}`);
 
