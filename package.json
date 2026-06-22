@@ -94,7 +94,7 @@
   },
   "dependencies": {
     "enquirer": "^2.4.1",
-    "node-cron": "^4.4.1"
+    "node-cron": "^4.5.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
