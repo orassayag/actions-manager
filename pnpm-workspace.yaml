@@ -23,3 +23,4 @@ minimumReleaseAgeExclude:
   - '@vitest/utils@4.1.9'
   - vitest@4.1.9
   - prettier@3.9.6
+  - eslint@10.8.0
