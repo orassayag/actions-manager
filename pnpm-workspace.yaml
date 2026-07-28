@@ -24,3 +24,4 @@ minimumReleaseAgeExclude:
   - vitest@4.1.9
   - prettier@3.9.6
   - eslint@10.8.0
+  - '@types/node@26.1.2'
