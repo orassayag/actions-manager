@@ -8,3 +8,4 @@ export { default as reposScanReporter } from './reposScanReporter';
 export { default as seriesAndMovies } from './seriesAndMovies';
 export { default as syncAutoPackagesUpdater } from './syncAutoPackagesUpdater';
 export { default as syncDaily } from './syncDaily';
+export { default as syncRepos } from './syncRepos';

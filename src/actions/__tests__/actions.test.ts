@@ -5,6 +5,7 @@ import {
   dailyEventsBot,
   syncDaily,
   syncAutoPackagesUpdater,
+  syncRepos,
   seriesAndMovies,
   reposScanReporter,
   contactsScanMaintainer,
@@ -33,6 +34,7 @@ describe('Actions Implementation', () => {
   const actions = [
     { action: dailyEventsBot, name: 'dailyEventsBot' },
     { action: syncAutoPackagesUpdater, name: 'syncAutoPackagesUpdater' },
+    { action: syncRepos, name: 'syncRepos' },
     { action: seriesAndMovies, name: 'seriesAndMovies' },
     { action: reposScanReporter, name: 'reposScanReporter' },
     { action: contactsScanMaintainer, name: 'contactsScanMaintainer' },

@@ -13,6 +13,14 @@ describe('Actions Registry', () => {
     expect(names.length).toBe(uniqueNames.size);
   });
 
+  it('should have unique task names for scheduled actions', () => {
+    const taskNames = actions
+      .map((a) => a.taskName)
+      .filter((t): t is string => Boolean(t));
+    const uniqueTaskNames = new Set(taskNames);
+    expect(taskNames.length).toBe(uniqueTaskNames.size);
+  });
+
   it('should have valid properties for all actions', () => {
     actions.forEach((action) => {
       expect(action).toHaveProperty('name');
@@ -21,5 +29,13 @@ describe('Actions Registry', () => {
       expect(typeof action.run).toBe('function');
       expect(typeof action.pauseAfterRun).toBe('boolean');
     });
+  });
+
+  it('should register the nightly syncRepos action', () => {
+    const syncRepos = actions.find((a) => a.name === 'syncRepos');
+    expect(syncRepos).toBeDefined();
+    expect(syncRepos?.label).toBe('Sync Repos');
+    expect(syncRepos?.taskName).toBe('syncRepos');
+    expect(syncRepos?.schedulePeriod).toBe('Daily');
   });
 });

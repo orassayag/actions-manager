@@ -108,6 +108,7 @@ Point your Task Scheduler task to the batch file and pass the action name as an 
 | `dailyEventsBot`          | Daily Events Bot         | Daily    |
 | `syncDaily`               | Sync Daily Documents     | Daily    |
 | `syncAutoPackagesUpdater` | Auto Packages Updater    | Weekly   |
+| `syncRepos`               | Sync Repos               | Daily    |
 | `seriesAndMovies`         | Series & Movies          | Manual   |
 | `reposScanReporter`       | Repos Scan Reporter      | Weekly   |
 | `contactsScanMaintainer`  | Contacts Scan Maintainer | Weekly   |
