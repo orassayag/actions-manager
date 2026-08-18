@@ -12,16 +12,16 @@ minimumReleaseAgeExclude:
   - '@typescript-eslint/utils@8.60.1 || 8.65.0 || 8.66.0 || 8.67.0'
   - '@typescript-eslint/visitor-keys@8.60.1 || 8.65.0 || 8.66.0 || 8.67.0'
   - typescript-eslint@8.60.1 || 8.65.0 || 8.66.0 || 8.67.0
-  - '@vitest/coverage-istanbul@4.1.9'
-  - '@vitest/expect@4.1.9'
-  - '@vitest/mocker@4.1.9'
-  - '@vitest/pretty-format@4.1.9'
-  - '@vitest/runner@4.1.9'
-  - '@vitest/snapshot@4.1.9'
-  - '@vitest/spy@4.1.9'
-  - '@vitest/ui@4.1.9'
-  - '@vitest/utils@4.1.9'
-  - vitest@4.1.9
+  - '@vitest/coverage-istanbul@4.1.9 || 4.1.11'
+  - '@vitest/expect@4.1.9 || 4.1.11'
+  - '@vitest/mocker@4.1.9 || 4.1.11'
+  - '@vitest/pretty-format@4.1.9 || 4.1.11'
+  - '@vitest/runner@4.1.9 || 4.1.11'
+  - '@vitest/snapshot@4.1.9 || 4.1.11'
+  - '@vitest/spy@4.1.9 || 4.1.11'
+  - '@vitest/ui@4.1.9 || 4.1.11'
+  - '@vitest/utils@4.1.9 || 4.1.11'
+  - vitest@4.1.9 || 4.1.11
   - prettier@3.9.6
   - eslint@10.8.0 || 10.8.1
   - '@types/node@26.1.2 || 26.2.0'
