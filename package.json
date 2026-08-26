@@ -98,7 +98,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
-    "@rolldown/binding-win32-x64-msvc": "^1.2.5",
+    "@rolldown/binding-win32-x64-msvc": "^1.2.6",
     "@types/node": "^26.3.0",
     "@types/node-cron": "^3.0.11",
     "@typescript-eslint/eslint-plugin": "^8.68.0",

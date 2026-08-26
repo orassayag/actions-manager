@@ -19,8 +19,8 @@ importers:
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.9.1(supports-color@7.2.0))
       '@rolldown/binding-win32-x64-msvc':
-        specifier: ^1.2.5
-        version: 1.2.5
+        specifier: ^1.2.6
+        version: 1.2.6
       '@types/node':
         specifier: ^26.3.0
         version: 26.3.0
@@ -504,8 +504,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@rolldown/binding-win32-x64-msvc@1.2.5':
-    resolution: {integrity: sha512-e/SXpgISz+IoqVcSSI0rx/d/he8zqLex+/rCWpnHpmVfmPIUjag9H6P7zotf0gJHwPUhQxZ/mF8tr6acebT9yw==}
+  '@rolldown/binding-win32-x64-msvc@1.2.6':
+    resolution: {integrity: sha512-np8iZSLfXlAD4kWhiyq/u0Yt8oZDtRQ8lGhQaCXo2rl37KNjeU0GjJuwr4P3oeZ++ROfofsKNBqR5LTO8aXyWQ==}
     engines: {node: ^20.19.0 || >=22.12.0}
     cpu: [x64]
     os: [win32]
@@ -1830,7 +1830,7 @@ snapshots:
   '@rolldown/binding-win32-x64-msvc@1.0.3':
     optional: true
 
-  '@rolldown/binding-win32-x64-msvc@1.2.5': {}
+  '@rolldown/binding-win32-x64-msvc@1.2.6': {}
 
   '@rolldown/pluginutils@1.0.1': {}
 
